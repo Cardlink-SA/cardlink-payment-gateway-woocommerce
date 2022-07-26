@@ -1,0 +1,78 @@
+/**
+ * All of the CSS for your public-facing functionality should be
+ * included in this file.
+ */
+
+.payment-cards__tokens {
+	-webkit-transition: opacity 450ms ease;
+	transition: opacity 450ms ease;
+}
+
+.payment-cards__tokens.loading {
+	opacity: .5;
+	pointer-events: none;
+}
+
+.payment-cards__field label {
+	display: -webkit-box;
+	display: -ms-flexbox;
+	display: flex;
+	-webkit-box-align: center;
+	-ms-flex-align: center;
+	align-items: center;
+	margin: 10px 5px;
+}
+
+.payment-cards__field label input {
+	margin-right: 5px;
+}
+
+.payment-cards__field label img {
+	float: none;
+	max-height: 25px;
+	width: auto;
+	margin-right: 5px;
+}
+
+.payment-cards__field a.remove {
+	margin-left: 10px;
+}
+
+.cardlink_payment_gateway_woocommerce_modal {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, .7);
+	z-index: 10000000000000;
+}
+
+.cardlink_payment_gateway_woocommerce_modal_wrapper {
+	display: -webkit-box;
+	display: -ms-flexbox;
+	display: flex;
+	-webkit-box-pack: center;
+	-ms-flex-pack: center;
+	justify-content: center;
+	-webkit-box-align: center;
+	-ms-flex-align: center;
+	align-items: center;
+	width: 100%;
+	height: 100%;
+}
+
+.cardlink_payment_gateway_woocommerce_modal_wrapper iframe {
+	max-width: 1280px;
+	width: 100%;
+	margin: 0 auto;
+	height: 90vh;
+}
+
+ul.wc_payment_methods li.wc_payment_method.payment_method_cardlink_payment_gateway_woocommerce label img {
+	max-width: 100%;
+	max-height: 35px!important;
+	float: none!important;
+    margin-top: 5px;
+    margin-left: 30px;
+}

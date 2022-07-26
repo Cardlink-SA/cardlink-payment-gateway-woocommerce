@@ -1,0 +1,26 @@
+/**
+ * All of the CSS for your admin-specific functionality should be
+ * included in this file.
+ */
+
+.installments_variation_rows {
+	max-width: 500px;
+}
+
+.installments_variation_row {
+	display: flex;
+	margin-bottom: 10px;
+}
+
+.installments_variation_row:last-child {
+	margin-bottom: 15px;
+}
+
+.installments_variation_amount,
+.installments_variation_number {
+	margin-right: 15px !important;
+}
+
+.installments_variation_row .button i {
+	vertical-align: middle;
+}
