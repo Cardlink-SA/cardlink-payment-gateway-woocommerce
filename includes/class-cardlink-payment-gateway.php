@@ -112,12 +112,6 @@ class Cardlink_Payment_Gateway {
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-cardlink-payment-gateway-i18n.php';
 
 		/**
-		 * The class responsible for encrypting and decrypting messages
-		 * of the plugin.
-		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-cardlink-payment-gateway-encryption.php';
-
-		/**
 		 * The class responsible for defining all actions that occur in the admin area.
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-cardlink-payment-gateway-admin.php';

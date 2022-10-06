@@ -80,9 +80,9 @@ class Cardlink_Payment_Gateway_Woocommerce extends WC_Payment_Gateway {
 		if ( $this->acquirer == 0 ) {
 			$this->icon = apply_filters( 'cardlink_icon', plugins_url() . '/cardlink-payment-gateway/public/img/cardlink.png' );
 		} elseif ( $this->acquirer == 1 ) {
-			$this->icon = apply_filters( 'cardlink_icon', plugins_url() . '/cardlink-payment-gateway/public/img/alpha-bank-logo.png' );
+			$this->icon = apply_filters( 'cardlink_icon', plugins_url() . '/cardlink-payment-gateway/public/img/cardlink.png' );
 		} elseif ( $this->acquirer == 2 ) {
-			$this->icon = apply_filters( 'cardlink_icon', plugins_url() . '/cardlink-payment-gateway/public/img/eurobank.png' );
+			$this->icon = apply_filters( 'cardlink_icon', plugins_url() . '/cardlink-payment-gateway/public/img/cardlink.png' );
 		}
 
 	}
@@ -159,6 +159,12 @@ class Cardlink_Payment_Gateway_Woocommerce extends WC_Payment_Gateway {
 				'description' => __( 'Enter your Shared Secret key', 'cardlink-payment-gateway' ),
 				'default'     => '',
 				'desc_tip'    => true
+			),
+			'installments'           => array(
+				'title'       => __( 'Maximum number of installments regardless of the total order amount', 'cardlink-payment-gateway' ),
+				'type'        => 'select',
+				'options'     => $this->get_installments(),
+				'description' => __( '1 to 10 Installments, 1 for one time payment. You must contact Cardlink first.', 'cardlink-payment-gateway' )
 			),
 			'installments_variation' => array(
 				'title'       => __( 'Maximum number of installments depending on the total order amount', 'cardlink-payment-gateway' ),
@@ -257,33 +263,22 @@ class Cardlink_Payment_Gateway_Woocommerce extends WC_Payment_Gateway {
 
 	public function get_option( $key, $empty_value = null ) {
 		$option_value = parent::get_option( $key, $empty_value );
-		if ( $key == 'shared_secret_key' ) {
-			$decrypted    = Cardlink_Payment_Gateway_Encryption::decrypt( base64_decode( $option_value ), substr( NONCE_KEY, 0, 32 ) );
-			$option_value = $decrypted;
-		}
 
 		return $option_value;
-	}
-
-	public function validate_shared_secret_key_field( $key, $value ) {
-		$encrypted = Cardlink_Payment_Gateway_Encryption::encrypt( $value, substr( NONCE_KEY, 0, 32 ) );
-
-		return base64_encode( $encrypted );
 	}
 
 	function payment_fields() {
 
 		global $woocommerce;
 
-		$Amount = 0;
+		$amount = 0;
 
-		//get: order or cart total, to compute max installments number.
 		if ( absint( get_query_var( 'order-pay' ) ) ) {
 			$order_id = absint( get_query_var( 'order-pay' ) );
 			$order    = new WC_Order( $order_id );
-			$Amount   = $order->get_total();
+			$amount   = $order->get_total();
 		} else if ( ! $woocommerce->cart->is_empty() ) {
-			$Amount = $woocommerce->cart->total;
+			$amount = $woocommerce->cart->total;
 		}
 
 		if ( $description = $this->get_description() ) {
@@ -309,7 +304,7 @@ class Cardlink_Payment_Gateway_Woocommerce extends WC_Payment_Gateway {
 						// not valid rule for installments
 						continue;
 					}
-					if ( $Amount >= ( $installment[0] ) ) {
+					if ( $amount >= ( $installment[0] ) ) {
 						$max_installments = $installment[1];
 					}
 				}
@@ -326,7 +321,7 @@ class Cardlink_Payment_Gateway_Woocommerce extends WC_Payment_Gateway {
 				$doseis_field .= '<option value="' . $i . '">' . ( $i == 1 ? __( 'Without installments', 'cardlink-payment-gateway' ) : $i ) . '</option>';
 			}
 			$doseis_field .= '</select>
-                        </div>'; // <img width="100%" height="100%" style="max-height:100px!important" src="'. plugins_url('img/cardlink_cards.png', __FILE__) .'" >
+                        </div>';
 
 			echo $doseis_field;
 		}
@@ -584,7 +579,7 @@ class Cardlink_Payment_Gateway_Woocommerce extends WC_Payment_Gateway {
 		}
 
 		$use_redirection = $this->popup == "no";
-		$form_target     = $use_redirection ? 'top' : 'payment_iframe';
+		$form_target     = $use_redirection ? '_top' : 'payment_iframe';
 		$html            = '<form action="' . esc_url( $post_url ) . '" method="POST" id="payment_form" target="' . $form_target . '" accept-charset="UTF-8">';
 
 		foreach ( $form_data_array as $key => $value ) {
@@ -638,10 +633,6 @@ class Cardlink_Payment_Gateway_Woocommerce extends WC_Payment_Gateway {
 
 	function process_payment( $order_id ) {
 
-		/*
-		get_permalink was used instead of $order->get_checkout_payment_url in redirect in order to have a fixed checkout page to provide to Cardlink
-		 */
-
 		$order  = new WC_Order( $order_id );
 		$doseis = isset( $_POST[ esc_attr( $this->id ) . '-card-doseis' ] ) ? intval( $_POST[ esc_attr( $this->id ) . '-card-doseis' ] ) : '';
 		if ( $doseis > 0 ) {
@@ -691,7 +682,6 @@ class Cardlink_Payment_Gateway_Woocommerce extends WC_Payment_Gateway {
 	function check_cardlink_response() {
 
 		global $woocommerce;
-		global $wpdb;
 
 		if ( $this->enable_log == 'yes' ) {
 			error_log( '---- eCommerce Response -----' );
@@ -756,7 +746,6 @@ class Cardlink_Payment_Gateway_Woocommerce extends WC_Payment_Gateway {
 			$message_type = 'error';
 			$message      = array( 'message' => $message, 'message_type' => $message_type );
 			$this->generic_add_meta( $orderid, '_cardlink_message', $message );
-			//Update the order status
 			$order->update_status( 'failed', 'DIGEST' );
 			if ( version_compare( WOOCOMMERCE_VERSION, '2.5', '<' ) ) {
 				$checkout_url = $woocommerce->cart->get_checkout_url();
@@ -778,14 +767,12 @@ class Cardlink_Payment_Gateway_Woocommerce extends WC_Payment_Gateway {
 				$message = __( 'Thank you for shopping with us.<br />Your transaction was successful, payment was received.<br />Your order is currently being processed.', 'cardlink-payment-gateway' );
 
 				if ( $this->order_note == 'yes' ) {
-					//Add customer order note
 					$order->add_order_note( __( 'Payment Received.<br />Your order is currently being processed.<br />We will be shipping your order to you soon.<br />Cardlink ID: ', 'cardlink-payment-gateway' ) . $paymentRef, 1 );
 
 				}
 			} else if ( $order->get_status() == 'completed' ) {
 				$message = __( 'Thank you for shopping with us.<br />Your transaction was successful, payment was received.<br />Your order is now complete.', 'cardlink-payment-gateway' );
 				if ( $this->order_note == 'yes' ) {
-					//Add customer order note
 					$order->add_order_note( __( 'Payment Received.<br />Your order is now complete.<br />Cardlink Transaction ID: ', 'cardlink-payment-gateway' ) . $paymentRef, 1 );
 				}
 			}
@@ -822,15 +809,9 @@ class Cardlink_Payment_Gateway_Woocommerce extends WC_Payment_Gateway {
 
 			$this->generic_add_meta( $orderid, '_cardlink_message', $message );
 
-			// Empty cart
 			WC()->cart->empty_cart();
 
 		} else if ( $status == 'CANCELED' ) {
-			// if(version_compare(WOOCOMMERCE_VERSION, '2.5', '<')) {
-			//     $checkout_url = $woocommerce->cart->get_checkout_url();
-			// } else {
-			//     $checkout_url = wc_get_checkout_url();
-			// }
 			$message = array(
 				'message'      => __( 'Thank you for shopping with us. <br />However, the transaction wasn\'t successful, payment was cancelled.', 'cardlink-payment-gateway' ),
 				'message_type' => 'notice'
@@ -838,29 +819,23 @@ class Cardlink_Payment_Gateway_Woocommerce extends WC_Payment_Gateway {
 			$this->generic_add_meta( $orderid, '_cardlink_message', $message );
 			$order->update_status( 'failed', 'ERROR ' . $message['message'] );
 
-			//    wc_add_notice($message, $message_type);
-			//wp_redirect($checkout_url);
-			//exit ;
 		} else if ( $status == 'REFUSED' ) {
 			$client_message = __( 'Thank you for shopping with us. <br />However, the transaction wasn\'t successful, payment wasn\'t received.', 'cardlink-payment-gateway' );
 			$message_type   = 'error';
 			$message        = array( 'message' => $client_message, 'message_type' => $message_type );
 			$this->generic_add_meta( $orderid, '_cardlink_message', $message );
-			//wc_add_notice( $message, $message_type );
 			$order->update_status( 'failed', 'REFUSED ' . $message );
 		} else if ( $status == 'ERROR' ) {
 			$client_message = __( 'Thank you for shopping with us. <br />However, the transaction wasn\'t successful, payment wasn\'t received.', 'cardlink-payment-gateway' );
 			$message_type   = 'error';
 			$message        = array( 'message' => $client_message, 'message_type' => $message_type );
 			$this->generic_add_meta( $orderid, '_cardlink_message', $message );
-			//wc_add_notice( $message, $message_type );
 			$order->update_status( 'failed', 'ERROR ' . $message );
 		} else {
 			$client_message = __( 'Thank you for shopping with us. <br />However, the transaction wasn\'t successful, payment wasn\'t received.', 'cardlink-payment-gateway' );
 			$message_type   = 'error';
 			$message        = array( 'message' => $client_message, 'message_type' => $message_type );
 			$this->generic_add_meta( $orderid, '_cardlink_message', $message );
-			//wc_add_notice( $message, $message_type );
 			$order->update_status( 'failed', 'Unknown: ' . $message );
 		}
 

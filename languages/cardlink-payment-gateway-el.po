@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Cardlink_Payment_Gateway\n"
-"POT-Creation-Date: 2022-04-06 13:27+0300\n"
-"PO-Revision-Date: 2022-07-13 17:44+0300\n"
+"POT-Creation-Date: 2022-08-08 13:55+0300\n"
+"PO-Revision-Date: 2022-08-08 13:57+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: el\n"
@@ -10,11 +10,13 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.0.1\n"
-"X-Poedit-Basepath: ../Documents/Dev/CO-DE/cardlink-payment/wordpress/wp-content/plugins/cardlink-payment-gateway\n"
+"X-Generator: Poedit 2.2.3\n"
+"X-Poedit-Basepath: ..\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Poedit-KeywordsList: __;_e\n"
 "X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPath-1: includes/class-cardlink-payment-gateway-woocommerce."
+"php\n"
 
 #: admin/class-cardlink-payment-gateway-admin.php:103
 msgid "Number of installments"
@@ -28,7 +30,7 @@ msgstr "Συνολικό ποσό παραγγελίας"
 msgid "Add variation"
 msgstr "Προσθήκη παραλλαγής"
 
-#: includes/class-cardlink-payment-gateway-delete.php:40
+#: includes/class-cardlink-payment-gateway-ajax.php:95
 msgid "No results"
 msgstr "Δε βρέθηκαν αποτελέσματα"
 
@@ -38,18 +40,21 @@ msgstr "Cardlink Payment Gateway"
 
 #: includes/class-cardlink-payment-gateway-woocommerce.php:42
 msgid ""
-"Cardlink Payment Gateway allows you to accept payment through various schemes such as Visa, Mastercard, Maestro, American Express, Diners, Discover cards on your Woocommerce "
-"Powered Site."
+"Cardlink Payment Gateway allows you to accept payment through various "
+"schemes such as Visa, Mastercard, Maestro, American Express, Diners, "
+"Discover cards on your Woocommerce Powered Site."
 msgstr ""
-"Με το Cardlink Payment Gateway μπορείτε να δέχεστε πληρωμές στο Woocommerce e-shop σας μέσω διαφορετικών σχημάτων, όπως Visa, Mastercard, Maestro, American Express, Diners και "
-"Discover."
+"Με το Cardlink Payment Gateway μπορείτε να δέχεστε πληρωμές στο Woocommerce "
+"e-shop σας μέσω διαφορετικών σχημάτων, όπως Visa, Mastercard, Maestro, "
+"American Express, Diners και Discover."
 
 #: includes/class-cardlink-payment-gateway-woocommerce.php:95
 msgid "Return to payments"
 msgstr "Επιστροφή στη σελίδα πληρωμής"
 
 #: includes/class-cardlink-payment-gateway-woocommerce.php:97
-msgid "Cardlink Payment Gateway allows you to accept payment through credit cards."
+msgid ""
+"Cardlink Payment Gateway allows you to accept payment through credit cards."
 msgstr "Επιστροφή στη σελίδα πληρωμής."
 
 #: includes/class-cardlink-payment-gateway-woocommerce.php:116
@@ -101,8 +106,12 @@ msgid "This controls the description which the user sees during checkout."
 msgstr "Ελέγχει την περιγραφή που βλέπει ο χρήστης στη σελίδα πληρωμής."
 
 #: includes/class-cardlink-payment-gateway-woocommerce.php:147
-msgid "Pay Via Cardlink: Accepts Visa, Mastercard, Maestro, American Express, Diners, Discover."
-msgstr "Πληρώστε μέσω της Cardlink: Δέχεται Visa, Mastercard, Maestro, American Express, Diners και Discover."
+msgid ""
+"Pay Via Cardlink: Accepts Visa, Mastercard, Maestro, American Express, "
+"Diners, Discover."
+msgstr ""
+"Πληρώστε μέσω της Cardlink: Δέχεται Visa, Mastercard, Maestro, American "
+"Express, Diners και Discover."
 
 #: includes/class-cardlink-payment-gateway-woocommerce.php:150
 msgid "Merchant ID"
@@ -119,6 +128,19 @@ msgstr "Shared Secret key"
 #: includes/class-cardlink-payment-gateway-woocommerce.php:159
 msgid "Enter your Shared Secret key"
 msgstr "Εισάγετε το Shared Secret key"
+
+#: includes/class-cardlink-payment-gateway-woocommerce.php:164
+msgid "Maximum number of installments regardless of the total order amount"
+msgstr ""
+"Μέγιστος αριθμός δόσεων ανεξάρτητα από το συνολικό ποσό της παραγγελίας"
+
+#: includes/class-cardlink-payment-gateway-woocommerce.php:167
+msgid ""
+"1 to 10 Installments, 1 for one time payment. You must contact Cardlink "
+"first."
+msgstr ""
+"1 έως 10 δόσεις, 1 για εφάπαξ πληρωμή. Πρέπει να επικοινωνήσετε πρώτα με την "
+"Cardlink."
 
 #: includes/class-cardlink-payment-gateway-woocommerce.php:170
 msgid "Maximum number of installments depending on the total order amount"
@@ -137,8 +159,13 @@ msgid "Enable to capture preauthorized payments"
 msgstr "Ενεργοποίηση είσπραξης πληρωμών με προέγκριση"
 
 #: includes/class-cardlink-payment-gateway-woocommerce.php:179
-msgid "Default payment method is Purchase, enable for Pre-Authorized payments. You will then need to accept them from Cardlink eCommerce Tool."
-msgstr "Η προεπιλεγμένη μέθοδος πληρωμής είναι η Αγορά. Ενεργοποιήστε τις πληρωμές με Προέγκριση. Στη συνέχεια θα πρέπει να τις αποδεχτείτε από το Cardlink Payment Gateway."
+msgid ""
+"Default payment method is Purchase, enable for Pre-Authorized payments. You "
+"will then need to accept them from Cardlink eCommerce Tool."
+msgstr ""
+"Η προεπιλεγμένη μέθοδος πληρωμής είναι η Αγορά. Ενεργοποιήστε τις πληρωμές "
+"με Προέγκριση. Στη συνέχεια θα πρέπει να τις αποδεχτείτε από το Cardlink "
+"Payment Gateway."
 
 #: includes/class-cardlink-payment-gateway-woocommerce.php:183
 msgid "Store card details"
@@ -149,8 +176,13 @@ msgid "Enable Tokenization"
 msgstr "Ενεργοποίηση Tokenization"
 
 #: includes/class-cardlink-payment-gateway-woocommerce.php:186
-msgid "If checked the user will have the ability to store credit card details for future purchases. You must contact Cardlink first."
-msgstr "Εάν επιλεγεί, ο χρήστης θα έχει τη δυνατότητα αποθήκευσης στοιχείων πιστωτικής κάρτας για μελλοντικές αγορές. Πρέπει πρώτα να επικοινωνήσετε με την Cardlink."
+msgid ""
+"If checked the user will have the ability to store credit card details for "
+"future purchases. You must contact Cardlink first."
+msgstr ""
+"Εάν επιλεγεί, ο χρήστης θα έχει τη δυνατότητα αποθήκευσης στοιχείων "
+"πιστωτικής κάρτας για μελλοντικές αγορές. Πρέπει πρώτα να επικοινωνήσετε με "
+"την Cardlink."
 
 #: includes/class-cardlink-payment-gateway-woocommerce.php:190
 msgid "Return page URL <br />(Successful or Failed Transactions)"
@@ -158,115 +190,171 @@ msgstr "URL σελίδας επιστροφής <br /> (Επιτυχημένες
 
 #: includes/class-cardlink-payment-gateway-woocommerce.php:193
 msgid ""
-"We recommend you to select the default “Thank You Page”, in order to automatically serve both successful and failed transactions, with the latter also offering the option to try "
-"the payment again.<br /> If you select a different page, you will have to handle failed payments yourself by adding custom code."
+"We recommend you to select the default “Thank You Page”, in order to "
+"automatically serve both successful and failed transactions, with the latter "
+"also offering the option to try the payment again.<br /> If you select a "
+"different page, you will have to handle failed payments yourself by adding "
+"custom code."
 msgstr ""
-"Σας συνιστούμε να επιλέξετε την προεπιλεγμένη «Thank you» σελίδα προκειμένου να εξυπηρετούνται αυτόματα τόσο οι επιτυχημένες όσο και οι αποτυχημένες συναλλαγές. Για τις "
-"αποτυχημένες προσφέρεται η επιλογή να γίνει εκ νέου η πληρωμή.<br /> Αν επιλέξετε διαφορετική σελίδα, θα πρέπει να διαχειριστείτε μόνοι σας τις αποτυχημένες πληρωμές, προσθέτοντας "
-"δικό σας κώδικα."
+"Σας συνιστούμε να επιλέξετε την προεπιλεγμένη «Thank you» σελίδα προκειμένου "
+"να εξυπηρετούνται αυτόματα τόσο οι επιτυχημένες όσο και οι αποτυχημένες "
+"συναλλαγές. Για τις αποτυχημένες προσφέρεται η επιλογή να γίνει εκ νέου η "
+"πληρωμή.<br /> Αν επιλέξετε διαφορετική σελίδα, θα πρέπει να διαχειριστείτε "
+"μόνοι σας τις αποτυχημένες πληρωμές, προσθέτοντας δικό σας κώδικα."
 
 #: includes/class-cardlink-payment-gateway-woocommerce.php:197
-msgid "Css url path"
-msgstr "Css url path"
-
-#: includes/class-cardlink-payment-gateway-woocommerce.php:191
 msgid "Pay in website"
 msgstr "Πληρωμή μέσω σελίδας στο κατάστημα"
 
-#: includes/class-cardlink-payment-gateway-woocommerce.php:193
+#: includes/class-cardlink-payment-gateway-woocommerce.php:199
 msgid "Enable payment iframe"
 msgstr "Ενεργοποίηση πληρωμής μέσω iframe"
 
-#: includes/class-cardlink-payment-gateway-woocommerce.php:193
-msgid "Customers will stay in website to complete payments without redirecting to Cardlink's eCommerce payment page. You must have a valid SSL certificate installed on your domain."
-msgstr "Customers will stay in website to complete payments without redirecting to Cardlink's eCommerce payment page. You must have a valid SSL certificate installed on your domain."
+#: includes/class-cardlink-payment-gateway-woocommerce.php:200
+msgid ""
+"Customers will stay in website to complete payments without redirecting to "
+"Cardlink's eCommerce payment page.<br />You must have a valid SSL "
+"certificate installed on your domain."
+msgstr ""
+"Οι πελάτες θα παραμείνουν στον ιστότοπο για να ολοκληρώσουν τις πληρωμές "
+"χωρίς να ανακατευθύνονται στη σελίδα πληρωμών ηλεκτρονικού εμπορίου της "
+"Cardlink.<br />Πρέπει να έχετε εγκαταστήσει ένα έγκυρο πιστοποιητικό SSL "
+"στον τομέα σας."
 
-#: includes/class-cardlink-payment-gateway-woocommerce.php:199
-msgid "Url of custom CSS stylesheet, to be used to display payment page styles."
-msgstr "URL του CSS stylesheet που θα χρησιμοποιηθεί για την εμφάνιση των σελίδων πληρωμής."
+#: includes/class-cardlink-payment-gateway-woocommerce.php:204
+msgid "Css url path"
+msgstr "Css url path"
 
-#: includes/class-cardlink-payment-gateway-woocommerce.php:203
+#: includes/class-cardlink-payment-gateway-woocommerce.php:206
+msgid ""
+"Url of custom CSS stylesheet, to be used to display payment page styles."
+msgstr ""
+"URL του CSS stylesheet που θα χρησιμοποιηθεί για την εμφάνιση των σελίδων "
+"πληρωμής."
+
+#: includes/class-cardlink-payment-gateway-woocommerce.php:210
 msgid "Enable Debug mode"
 msgstr "Ενεργοποίηση λειτουργίας Εντοπισμού Σφαλμάτων"
 
-#: includes/class-cardlink-payment-gateway-woocommerce.php:205
+#: includes/class-cardlink-payment-gateway-woocommerce.php:212
 msgid "Enabling this will log certain information"
-msgstr "Η ενεργοποίηση της λειτουργίας θα οδηγήσει στην καταγραφή ορισμένων πληροφοριών"
-
-#: includes/class-cardlink-payment-gateway-woocommerce.php:207
-msgid "Enabling this (and the debug mode from your wp-config file) will log information, e.g. responses, which will help in debugging issues."
 msgstr ""
-"Η ενεργοποίηση της λειτουργίας (και της λειτουργίας Εντοπισμού Σφαλμάτων από το αρχείο σας wp-config) θα οδηγήσει στην καταγραφή πληροφοριών, π.χ. αποκρίσεων, οι οποίες θα σας "
-"βοηθήσουν στον εντοπισμό σφαλμάτων."
+"Η ενεργοποίηση της λειτουργίας θα οδηγήσει στην καταγραφή ορισμένων "
+"πληροφοριών"
+
+#: includes/class-cardlink-payment-gateway-woocommerce.php:214
+msgid ""
+"Enabling this (and the debug mode from your wp-config file) will log "
+"information, e.g. responses, which will help in debugging issues."
+msgstr ""
+"Η ενεργοποίηση της λειτουργίας (και της λειτουργίας Εντοπισμού Σφαλμάτων από "
+"το αρχείο σας wp-config) θα οδηγήσει στην καταγραφή πληροφοριών, π.χ. "
+"αποκρίσεων, οι οποίες θα σας βοηθήσουν στον εντοπισμό σφαλμάτων."
 
 #: includes/class-cardlink-payment-gateway-woocommerce.php:239
 msgid "Thank you page"
 msgstr "Thank you page"
 
-#: includes/class-cardlink-payment-gateway-woocommerce.php:330
+#: includes/class-cardlink-payment-gateway-woocommerce.php:327
 msgid "Choose Installments"
 msgstr "Επιλέξτε δόσεις"
 
-#: includes/class-cardlink-payment-gateway-woocommerce.php:334
+#: includes/class-cardlink-payment-gateway-woocommerce.php:331
 msgid "Without installments"
 msgstr "Χωρίς δόσεις"
 
-#: includes/class-cardlink-payment-gateway-woocommerce.php:374
+#: includes/class-cardlink-payment-gateway-woocommerce.php:371
 msgid "Remove card"
 msgstr "Αφαίρεση κάρτας"
 
-#: includes/class-cardlink-payment-gateway-woocommerce.php:376
+#: includes/class-cardlink-payment-gateway-woocommerce.php:381
 msgid "Add your credit card"
 msgstr "Προσθήκη κάρτας"
 
-#: includes/class-cardlink-payment-gateway-woocommerce.php:384
-msgid "New card"
-msgstr "Νέα κάρτα"
-
-#: includes/class-cardlink-payment-gateway-woocommerce.php:391
+#: includes/class-cardlink-payment-gateway-woocommerce.php:388
 msgid "Store your card?"
 msgstr "Θέλετε να αποθηκεύσετε την κάρτα σας;"
 
-#: includes/class-cardlink-payment-gateway-woocommerce.php:471
-msgid "Thank you for your order. We are now redirecting you to Cardlink to make payment."
-msgstr "Ευχαριστούμε για την παραγγελία σας. Σας ανακατευθύνουμε στη σελίδα πληρωμών της Cardlink για να διεκπεραιώσετε την πληρωμή σας."
-
-#: includes/class-cardlink-payment-gateway-woocommerce.php:616
+#: includes/class-cardlink-payment-gateway-woocommerce.php:602
 msgid "Pay via Cardlink"
 msgstr "Πληρώστε με Cardlink checkout"
 
-#: includes/class-cardlink-payment-gateway-woocommerce.php:672
-msgid "Thank you for your order. We are now redirecting you to Cardlink Paycenter to make payment."
-msgstr "Ευχαριστούμε για την παραγγελία σας. Σας ανακατευθύνουμε στη Σελίδα Πληρωμών της Cardlink για να διεκπεραιώσετε την πληρωμή σας."
+#: includes/class-cardlink-payment-gateway-woocommerce.php:611
+#: includes/class-cardlink-payment-gateway-woocommerce.php:685
+msgid "Thank you for your order. We are now redirecting you to make payment."
+msgstr ""
+"Ευχαριστούμε για την παραγγελία σας. Σας ανακατευθύνουμε στη σελίδα πληρωμών "
+"της Cardlink για να διεκπεραιώσετε την πληρωμή σας."
 
-#: includes/class-cardlink-payment-gateway-woocommerce.php:743
-msgid "A technical problem occured. <br />The transaction wasn't successful, payment wasn't received."
-msgstr "Παρουσιάστηκε ένα τεχνικό πρόβλημα. <br />Μη επιτυχής συναλλαγή λόγω τεχνικού προβλήματος. Η πληρωμή σας δεν ολοκληρώθηκε."
+#: includes/class-cardlink-payment-gateway-woocommerce.php:755
+msgid ""
+"A technical problem occured. <br />The transaction wasn't successful, "
+"payment wasn't received."
+msgstr ""
+"Παρουσιάστηκε ένα τεχνικό πρόβλημα. <br />Μη επιτυχής συναλλαγή λόγω "
+"τεχνικού προβλήματος. Η πληρωμή σας δεν ολοκληρώθηκε."
 
-#: includes/class-cardlink-payment-gateway-woocommerce.php:763
+#: includes/class-cardlink-payment-gateway-woocommerce.php:776
 msgid "Payment Via Cardlink<br />Transaction ID: "
 msgstr "Πληρωμή μέσω της Cardlink<br />Αναγνωριστικό Συναλλαγής: "
 
-#: includes/class-cardlink-payment-gateway-woocommerce.php:764
-msgid "Thank you for shopping with us.<br />Your transaction was successful, payment was received.<br />Your order is currently being processed."
-msgstr "Ευχαριστούμε που μας επιλέξατε.<br />Η συναλλαγή σας ήταν επιτυχής. Λάβαμε την πληρωμή.<br />Η παραγγελία σας βρίσκεται στο στάδιο της επεξεργασίας."
+#: includes/class-cardlink-payment-gateway-woocommerce.php:777
+msgid ""
+"Thank you for shopping with us.<br />Your transaction was successful, "
+"payment was received.<br />Your order is currently being processed."
+msgstr ""
+"Ευχαριστούμε που μας επιλέξατε.<br />Η συναλλαγή σας ήταν επιτυχής. Λάβαμε "
+"την πληρωμή.<br />Η παραγγελία σας βρίσκεται στο στάδιο της επεξεργασίας."
 
-#: includes/class-cardlink-payment-gateway-woocommerce.php:768
-msgid "Payment Received.<br />Your order is currently being processed.<br />We will be shipping your order to you soon.<br />Cardlink ID: "
-msgstr "Λάβαμε την πληρωμή.<br />Η παραγγελία σας βρίσκεται στο στάδιο της επεξεργασίας.<br />Θα σας αποστείλουμε την παραγγελία σας σύντομα.<br />Αναγνωριστικό ID Cardlink: "
+#: includes/class-cardlink-payment-gateway-woocommerce.php:780
+msgid ""
+"Payment Received.<br />Your order is currently being processed.<br />We will "
+"be shipping your order to you soon.<br />Cardlink ID: "
+msgstr ""
+"Λάβαμε την πληρωμή.<br />Η παραγγελία σας βρίσκεται στο στάδιο της "
+"επεξεργασίας.<br />Θα σας αποστείλουμε την παραγγελία σας σύντομα.<br /"
+">Αναγνωριστικό ID Cardlink: "
 
-#: includes/class-cardlink-payment-gateway-woocommerce.php:772
-msgid "Thank you for shopping with us.<br />Your transaction was successful, payment was received.<br />Your order is now complete."
-msgstr "Ευχαριστούμε που μας επιλέξατε.<br />Η συναλλαγή σας ήταν επιτυχής. Λάβαμε την πληρωμή.<br />Η παραγγελία σας ολοκληρώθηκε."
+#: includes/class-cardlink-payment-gateway-woocommerce.php:784
+msgid ""
+"Thank you for shopping with us.<br />Your transaction was successful, "
+"payment was received.<br />Your order is now complete."
+msgstr ""
+"Ευχαριστούμε που μας επιλέξατε.<br />Η συναλλαγή σας ήταν επιτυχής. Λάβαμε "
+"την πληρωμή.<br />Η παραγγελία σας ολοκληρώθηκε."
 
-#: includes/class-cardlink-payment-gateway-woocommerce.php:775
-msgid "Payment Received.<br />Your order is now complete.<br />Cardlink Transaction ID: "
-msgstr "Λάβαμε την πληρωμή.<br />Η παραγγελία σας ολοκληρώθηκε.<br />Αναγνωριστικό συναλλαγής Cardlink: "
+#: includes/class-cardlink-payment-gateway-woocommerce.php:786
+msgid ""
+"Payment Received.<br />Your order is now complete.<br />Cardlink Transaction "
+"ID: "
+msgstr ""
+"Λάβαμε την πληρωμή.<br />Η παραγγελία σας ολοκληρώθηκε.<br />Αναγνωριστικό "
+"συναλλαγής Cardlink: "
 
-#: includes/class-cardlink-payment-gateway-woocommerce.php:821
-msgid "Thank you for shopping with us. <br />However, the transaction wasn't successful, payment was cancelled."
-msgstr "Ευχαριστούμε που μας επιλέξατε. <br />Ωστόσο, η συναλλαγή δεν ήταν επιτυχής. Η πληρωμή ακυρώθηκε."
+#: includes/class-cardlink-payment-gateway-woocommerce.php:826
+msgid ""
+"Thank you for shopping with us. <br />However, the transaction wasn't "
+"successful, payment was cancelled."
+msgstr ""
+"Ευχαριστούμε που μας επιλέξατε. <br />Ωστόσο, η συναλλαγή δεν ήταν επιτυχής. "
+"Η πληρωμή ακυρώθηκε."
 
-#: includes/class-cardlink-payment-gateway-woocommerce.php:831 includes/class-cardlink-payment-gateway-woocommerce.php:838 includes/class-cardlink-payment-gateway-woocommerce.php:845
-msgid "Thank you for shopping with us. <br />However, the transaction wasn't successful, payment wasn't received."
-msgstr "Ευχαριστούμε που μας επιλέξατε. <br />Ωστόσο, η συναλλαγή δεν ήταν επιτυχής. Δεν λάβαμε την πληρωμή."
+#: includes/class-cardlink-payment-gateway-woocommerce.php:833
+#: includes/class-cardlink-payment-gateway-woocommerce.php:839
+#: includes/class-cardlink-payment-gateway-woocommerce.php:845
+msgid ""
+"Thank you for shopping with us. <br />However, the transaction wasn't "
+"successful, payment wasn't received."
+msgstr ""
+"Ευχαριστούμε που μας επιλέξατε. <br />Ωστόσο, η συναλλαγή δεν ήταν επιτυχής. "
+"Δεν λάβαμε την πληρωμή."
+
+#~ msgid "New card"
+#~ msgstr "Νέα κάρτα"
+
+#~ msgid ""
+#~ "Thank you for your order. We are now redirecting you to Cardlink "
+#~ "Paycenter to make payment."
+#~ msgstr ""
+#~ "Ευχαριστούμε για την παραγγελία σας. Σας ανακατευθύνουμε στη Σελίδα "
+#~ "Πληρωμών της Cardlink για να διεκπεραιώσετε την πληρωμή σας."

@@ -1,9 +1,9 @@
 === Cardlink Payment Gateway ===
 Contributors: cardlink
 Tags: payments, payment-gateway
-Requires at least: 5.9.3
-Tested up to: 6.0
-Stable tag: 6.0
+Requires at least: 5.8.3
+Tested up to: 5.8.3
+Stable tag: 5.8.3
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -48,5 +48,7 @@ Here are the detailed instructions to manually install a WordPress plugin by tra
 
 == Changelog ==
 
+= 1.0.1 =
+* Compatibility updates
 = 1.0.0 =
 * Initial release
