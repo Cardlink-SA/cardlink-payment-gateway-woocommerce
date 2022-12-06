@@ -16,7 +16,7 @@
  * @license           GPL-2.0-or-later
  *
  * @wordpress-plugin
- * Plugin Name:       Cardlink Payment Gatway
+ * Plugin Name:       Cardlink Payment Gateway
  * Plugin URI:        https://www.cardlink.gr/
  * Description:       Cardlink Payment Gateway allows you to accept payment through various schemes such as Visa, Mastercard, Maestro, American Express, Diners, Discover cards on your website.
  * Version:           1.0.2
