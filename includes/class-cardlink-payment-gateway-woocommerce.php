@@ -164,13 +164,13 @@ class Cardlink_Payment_Gateway_Woocommerce extends WC_Payment_Gateway {
 				'title'       => __( 'Maximum number of installments regardless of the total order amount', 'cardlink-payment-gateway' ),
 				'type'        => 'select',
 				'options'     => $this->get_installments(),
-				'description' => __( '1 to 10 Installments, 1 for one time payment. You must contact Cardlink first.', 'cardlink-payment-gateway' )
+				'description' => __( '1 to 60 Installments, 1 for one time payment. You must contact Cardlink first.', 'cardlink-payment-gateway' )
 			),
 			'installments_variation' => array(
 				'title'       => __( 'Maximum number of installments depending on the total order amount', 'cardlink-payment-gateway' ),
 				'type'        => 'hidden',
 				'class'       => 'installments-variation',
-				'description' => __( 'Add amount and installments for each row. The limit is 10.', 'cardlink-payment-gateway' )
+				'description' => __( 'Add amount and installments for each row. The limit is 60.', 'cardlink-payment-gateway' )
 			),
 			'transaction_type'       => array(
 				'title'       => __( 'Pre-Authorize', 'cardlink-payment-gateway' ),
@@ -254,7 +254,7 @@ class Cardlink_Payment_Gateway_Woocommerce extends WC_Payment_Gateway {
 
 		$installment_list = [];
 
-		for ( $i = 1; $i <= 10; $i ++ ) {
+		for ( $i = 1; $i <= 60; $i ++ ) {
 			$installment_list[ $i ] = $i;
 		}
 

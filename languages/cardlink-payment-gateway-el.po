@@ -136,10 +136,10 @@ msgstr ""
 
 #: includes/class-cardlink-payment-gateway-woocommerce.php:167
 msgid ""
-"1 to 10 Installments, 1 for one time payment. You must contact Cardlink "
+"1 to 60 Installments, 1 for one time payment. You must contact Cardlink "
 "first."
 msgstr ""
-"1 έως 10 δόσεις, 1 για εφάπαξ πληρωμή. Πρέπει να επικοινωνήσετε πρώτα με την "
+"1 έως 60 δόσεις, 1 για εφάπαξ πληρωμή. Πρέπει να επικοινωνήσετε πρώτα με την "
 "Cardlink."
 
 #: includes/class-cardlink-payment-gateway-woocommerce.php:170
@@ -147,8 +147,8 @@ msgid "Maximum number of installments depending on the total order amount"
 msgstr "Μέγιστος αριθμός δόσεων ανάλογα με το συνολικό ποσό αγοράς"
 
 #: includes/class-cardlink-payment-gateway-woocommerce.php:173
-msgid "Add amount and installments for each row. The limit is 10."
-msgstr "Προσθέστε ποσό και δόσεις για κάθε σειρά. Το ανώτατο όριο είναι 10."
+msgid "Add amount and installments for each row. The limit is 60."
+msgstr "Προσθέστε ποσό και δόσεις για κάθε σειρά. Το ανώτατο όριο είναι 60."
 
 #: includes/class-cardlink-payment-gateway-woocommerce.php:176
 msgid "Pre-Authorize"

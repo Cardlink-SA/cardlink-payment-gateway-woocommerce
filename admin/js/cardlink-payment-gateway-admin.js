@@ -37,7 +37,7 @@
 	function installmentsOutput(installments) {
 		var installments = installments || 0;
 		var options = '<option value="0">' + strings.noOfInstallments + '</option>';
-		for( var i = 1; i <= 24; i++ ){
+		for( var i = 1; i <= 60; i++ ){
 			if ( i === installments ){
 				options += '<option value="'+i+'" selected>' + i + '</option>';
 			} else {
