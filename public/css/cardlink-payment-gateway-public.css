@@ -69,6 +69,10 @@
 	height: 90vh;
 }
 
+.cardlink_payment_gateway_woocommerce_modal_wrapper .wrapper {
+	background: #fff!important;
+}
+
 ul.wc_payment_methods li.wc_payment_method.payment_method_cardlink_payment_gateway_woocommerce label img {
 	max-width: 100%;
 	max-height: 35px!important;

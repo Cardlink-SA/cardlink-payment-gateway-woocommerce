@@ -48,6 +48,8 @@ Here are the detailed instructions to manually install a WordPress plugin by tra
 
 == Changelog ==
 
+= 1.0.3 =
+* Css fix on iframe
 = 1.0.2 =
 * Fix Installments total number
 = 1.0.1 =
