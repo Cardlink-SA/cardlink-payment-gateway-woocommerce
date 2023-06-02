@@ -48,10 +48,12 @@ Here are the detailed instructions to manually install a WordPress plugin by tra
 
 == Changelog ==
 
+= 1.0.4 =
+* Bugfix: Check if WooCommerce is installed and activated before initialize plugin functionality
 = 1.0.3 =
-* Css fix on iframe
+* Styling updates on iframe popup window
 = 1.0.2 =
-* Fix Installments total number
+* Bugfix: Installments total number
 = 1.0.1 =
 * Compatibility updates
 = 1.0.0 =
