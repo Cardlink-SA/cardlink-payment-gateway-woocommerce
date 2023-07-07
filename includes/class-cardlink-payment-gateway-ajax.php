@@ -21,9 +21,10 @@ class Cardlink_Payment_Gateway_Delete {
 
 		$this->success_url              = get_site_url() . "/?wc-api=" . $this->api_request_url . "&result=success";
 		$this->fail_url                 = get_site_url() . "/?wc-api=" . $this->api_request_url . "&result=success";
-		$payment_gateways               = WC_Payment_Gateways::instance();
-		$this->payment_gateway_instance = $payment_gateways->payment_gateways()['cardlink_payment_gateway_woocommerce'];
-		$this->redirect_page_id         = $this->payment_gateway_instance->get_option( 'redirect_page_id' );
+		//$payment_gateways               = WC_Payment_Gateways::instance();
+		//$this->payment_gateway_instance = $payment_gateways->payment_gateways()['cardlink_payment_gateway_woocommerce'];
+		//$this->payment_gateway_instance	= WC()->payment_gateways->payment_gateways()['cardlink_payment_gateway_woocommerce'];
+		//$this->redirect_page_id         = $this->payment_gateway_instance->get_option( 'redirect_page_id' );
 
 		add_action( 'wp_ajax_delete_token', array( &$this, 'delete_token' ) );
 		add_action( 'wp_ajax_set_redirection_status', array( &$this, 'set_redirection_status' ) );
@@ -67,13 +68,17 @@ class Cardlink_Payment_Gateway_Delete {
 			self::respond( false, $response );
 		}
 
+		$payment_gateway_instance	= WC()->payment_gateways->payment_gateways()['cardlink_payment_gateway_woocommerce'];
+		$redirect_page_id         	= $payment_gateway_instance->get_option( 'redirect_page_id' );
+
 		if ( $response['redirected'] !== '1' ) {
-			if ( $this->redirect_page_id == "-1" ) {
-				$response['redirect_url'] = $this->payment_gateway_instance->get_return_url( $order );
+			if ( $redirect_page_id == "-1" ) {
+				$response['redirect_url'] = $payment_gateway_instance->get_return_url( $order );
 			} else {
-				$response['redirect_url'] = ( $this->redirect_page_id == "" || $this->redirect_page_id == 0 ) ? $this->payment_gateway_instance->get_return_url( $order ) : get_permalink( $this->redirect_page_id );
+				$response['redirect_url'] = ( $redirect_page_id == "" || $redirect_page_id == 0 ) ? $payment_gateway_instance->get_return_url( $order ) : get_permalink( $redirect_page_id );
 			}
 		}
+
 		self::respond( true, $response );
 	}
 

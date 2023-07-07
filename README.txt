@@ -48,6 +48,8 @@ Here are the detailed instructions to manually install a WordPress plugin by tra
 
 == Changelog ==
 
+= 1.0.5 =
+* Bugfix: Fix compatibility issues with Payment Plugins for Stripe WooCommerce and Payment Plugins for PayPal WooCommerce plugins
 = 1.0.4 =
 * Bugfix: Check if WooCommerce is installed and activated before initialize plugin functionality
 = 1.0.3 =
