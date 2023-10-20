@@ -6,10 +6,290 @@ if ( ! class_exists( 'WC_Payment_Gateway' ) ) {
 
 
 /**
+ *  Gateway Class Helper
+ */
+class Cardlink_Payment_Gateway_Woocommerce_Helper {
+
+	static function get_acquirers() {
+		return [
+			'Cardlink Checkout',
+			'Nexi Checkout',
+			'Worldline Greece Checkout'
+		];
+	}
+
+	static function calculate_digest( $input ) {
+		$digest = base64_encode( hash( 'sha256', ( $input ), true ) );
+
+		return $digest;
+	}
+
+	static function get_post_url( $environment, $acquirer ) {
+		if ( $environment == "yes" ) {
+			switch ( $acquirer ) {
+				case 0 :
+					return $post_url = "https://ecommerce-test.cardlink.gr/vpos/shophandlermpi";
+				case 1 :
+					return $post_url = "https://alphaecommerce-test.cardlink.gr/vpos/shophandlermpi";
+				case 2 :
+					return $post_url = "https://eurocommerce-test.cardlink.gr/vpos/shophandlermpi";
+			}
+		} else {
+			switch ( $acquirer ) {
+				case 0 :
+					return $post_url = "https://ecommerce.cardlink.gr/vpos/shophandlermpi";
+				case 1 :
+					return $post_url = "https://www.alphaecommerce.gr/vpos/shophandlermpi";
+				case 2 :
+					return $post_url = "https://vpos.eurocommerce.gr/vpos/shophandlermpi";
+			}
+		}
+	}
+
+	static function generic_add_meta( $orderid, $key, $value ) {
+		$order = new WC_Order( $orderid );
+		if ( method_exists( $order, 'add_meta_data' ) && method_exists( $order, 'save_meta_data' ) ) {
+			$order->add_meta_data( $key, $value, true );
+			$order->save_meta_data();
+		} else {
+			update_post_meta( $orderid, $key, $value );
+		}
+	}
+
+	/**
+	 * Verify a successful Payment!
+	 * */
+	static function check_response( $post_data, $enable_log, $shared_secret_key, $order_note, $id ) {
+
+		global $woocommerce;
+
+
+		if ( $enable_log == 'yes' ) {
+			error_log( '---- eCommerce Response -----' );
+			error_log( print_r( $post_data, true ) );
+			error_log( '---- End of eCommerce Response ----' );
+		}
+
+		$mid = filter_var( $post_data['mid'], FILTER_SANITIZE_NUMBER_INT );
+
+		$orderid_session = WC()->session->get( 'order_id' );
+		$orderid_post    = filter_var( $post_data['orderid'], FILTER_SANITIZE_STRING );
+
+		$reg = preg_match( '/^(.*?)at/', $orderid = $orderid_post, $matches );
+
+		if ( ! empty( $matches ) ) {
+			$orderid = $matches[1];
+		} else {
+			$orderid = $orderid_session;
+		}
+
+		if ( $orderid == '' ) {
+			$orderid = $orderid_post;
+			error_log( "Cardlink: something went wrong with order id " );
+			error_log( print_r( $post_data, true ) );
+			error_log( print_r( $matches, true ) );
+			error_log( $orderid_session );
+		}
+
+		$status         = filter_var( $post_data['status'], FILTER_SANITIZE_STRING );
+		$orderAmount    = filter_var( $post_data['orderAmount'], FILTER_SANITIZE_NUMBER_FLOAT );
+		$currency       = filter_var( $post_data['currency'], FILTER_SANITIZE_STRING );
+		$paymentTotal   = filter_var( $post_data['paymentTotal'], FILTER_SANITIZE_NUMBER_FLOAT );
+		$message        = isset( $post_data['message'] ) ? filter_var( $post_data['message'], FILTER_SANITIZE_STRING ) : '';
+		$riskScore      = isset( $post_data['riskScore'] ) ? filter_var( $post_data['riskScore'], FILTER_SANITIZE_NUMBER_FLOAT ) : '';
+		$payMethod      = isset( $post_data['payMethod'] ) ? filter_var( $post_data['payMethod'], FILTER_SANITIZE_STRING ) : '';
+		$txId           = isset( $post_data['txId'] ) ? filter_var( $post_data['txId'], FILTER_SANITIZE_NUMBER_FLOAT ) : '';
+		$paymentRef     = isset( $post_data['paymentRef'] ) ? filter_var( $post_data['paymentRef'], FILTER_SANITIZE_STRING ) : '';
+		$extToken       = isset( $post_data['extToken'] ) ? filter_var( $post_data['extToken'], FILTER_SANITIZE_STRING ) : '';
+		$extTokenPanEnd = isset( $post_data['extTokenPanEnd'] ) ? filter_var( $post_data['extTokenPanEnd'], FILTER_SANITIZE_STRING ) : '';
+		$extTokenExp    = isset( $post_data['extTokenExp'] ) ? $post_data['extTokenExp'] : '';
+		$digest         = filter_var( $post_data['digest'], FILTER_SANITIZE_STRING );
+		$xlsbonusdigest = '';
+		if( array_key_exists( 'xlsbonusdigest', $post_data ) ){
+			$xlsbonusdigest     = filter_var( $post_data['xlsbonusdigest'], FILTER_SANITIZE_STRING );
+		}
+		$extTokenExpYear  = substr( $extTokenExp, 0, 4 );
+		$extTokenExpMonth = substr( $extTokenExp, 4, 2 );
+
+		$form_data = '';
+		$form_data_bonus = '';
+		foreach ( $post_data as $k => $v ) {
+			if ( ! in_array( $k, array( '_charset_', 'digest', 'submitButton', 'xlsbonusadjamt', 'xlsbonustxid', 'xlsbonusstatus', 'xlsbonusdetails', 'xlsbonusdigest' ) ) ) {
+				$form_data .= filter_var( $post_data[ $k ], FILTER_SANITIZE_STRING );
+			}
+			if ( in_array( $k, array( 'xlsbonusadjamt', 'xlsbonustxid', 'xlsbonusstatus', 'xlsbonusdetails' ) ) ) {
+				$form_data_bonus .= filter_var( $post_data[ $k ], FILTER_SANITIZE_STRING );
+			}
+		}		
+
+		$form_data       		.= $shared_secret_key;
+		$computed_digest 		= self::calculate_digest( $form_data );
+		$form_data_bonus    	.= $shared_secret_key;
+		$computed_digest_bonus 	= self::calculate_digest( $form_data_bonus );
+
+		$order           = new WC_Order( $orderid );
+		$current_user_id = $order->get_user_id();
+		$message         = array( 'message' => '', 'message_type' => '' );
+
+		$failed = true;
+		if ( $digest == $computed_digest ){
+			$failed = false;
+		}
+		if( $xlsbonusdigest != '' ){
+			if ( $xlsbonusdigest == $computed_digest_bonus ){
+				$failed = false;
+			}else{
+				$failed = true;
+			}
+		}
+
+		if ( $failed ) {
+			$message      = __( 'A technical problem occured. <br />The transaction wasn\'t successful, payment wasn\'t received.', 'cardlink-payment-gateway' );
+			$message_type = 'error';
+			$message      = array( 'message' => $message, 'message_type' => $message_type );
+			self::generic_add_meta( $orderid, '_cardlink_message', $message );
+			$order->update_status( 'failed', 'DIGEST' );
+			if ( version_compare( WOOCOMMERCE_VERSION, '2.5', '<' ) ) {
+				$checkout_url = $woocommerce->cart->get_checkout_url();
+			} else {
+				$checkout_url = wc_get_checkout_url();
+			}
+			wp_redirect( $checkout_url );
+			exit;
+		}
+
+		update_post_meta( $orderid, 'redirected_for_payment', false );
+
+		if ( $status == 'CAPTURED' || $status == 'AUTHORIZED' ) {
+			$order->payment_complete( $paymentRef );
+
+			if ( $order->get_status() == 'processing' ) {
+
+				$order->add_order_note( __( 'Payment Via Cardlink<br />Transaction ID: ', 'cardlink-payment-gateway' ) . $paymentRef );
+				$message = __( 'Thank you for shopping with us.<br />Your transaction was successful, payment was received.<br />Your order is currently being processed.', 'cardlink-payment-gateway' );
+
+				if ( $order_note == 'yes' ) {
+					$order->add_order_note( __( 'Payment Received.<br />Your order is currently being processed.<br />We will be shipping your order to you soon.<br />Cardlink ID: ', 'cardlink-payment-gateway' ) . $paymentRef, 1 );
+
+				}
+			} else if ( $order->get_status() == 'completed' ) {
+				$message = __( 'Thank you for shopping with us.<br />Your transaction was successful, payment was received.<br />Your order is now complete.', 'cardlink-payment-gateway' );
+				if ( $order_note == 'yes' ) {
+					$order->add_order_note( __( 'Payment Received.<br />Your order is now complete.<br />Cardlink Transaction ID: ', 'cardlink-payment-gateway' ) . $paymentRef, 1 );
+				}
+			}
+
+			$tokens      = WC_Payment_Tokens::get_customer_tokens( $current_user_id, $id );
+			$token_class = new WC_Payment_Token_Data_Store;
+			$card_exist  = false;
+			foreach ( $tokens as $key => $tok ) {
+				$token_meta = $token_class->get_metadata( $key );
+				if ( $token_meta['card_type'][0] == $payMethod && $token_meta['last4'][0] == $extTokenPanEnd && $token_meta['expiry_year'][0] == $extTokenExpYear && $token_meta['expiry_month'][0] == $extTokenExpMonth ) {
+					$card_exist = true;
+				}
+			}
+
+			if ( $extToken && ! $card_exist ) {
+				// Build the token
+				$token = new WC_Payment_Token_CC();
+				$token->set_token( $extToken ); // Token comes from payment processor
+				$token->set_gateway_id( $id );
+				$token->set_last4( $extTokenPanEnd );
+				$token->set_expiry_year( $extTokenExpYear );
+				$token->set_expiry_month( $extTokenExpMonth );
+				$token->set_card_type( $payMethod );
+				$token->set_user_id( $current_user_id );
+				// Save the new token to the database
+				$token->save();
+				// Set this token as the users new default token
+				WC_Payment_Tokens::set_users_default( $current_user_id, $token->get_id() );
+			}
+
+			$message_type = 'success';
+
+			$message = array( 'message' => $message, 'message_type' => $message_type );
+
+			self::generic_add_meta( $orderid, '_cardlink_message', $message );
+
+			WC()->cart->empty_cart();
+
+		} else if ( $status == 'CANCELED' ) {
+			$message = array(
+				'message'      => __( 'Thank you for shopping with us. <br />However, the transaction wasn\'t successful, payment was cancelled.', 'cardlink-payment-gateway' ),
+				'message_type' => 'notice'
+			);
+			self::generic_add_meta( $orderid, '_cardlink_message', $message );
+			$order->update_status( 'failed', 'ERROR ' . $message['message'] );
+
+		} else if ( $status == 'REFUSED' ) {
+			$client_message = __( 'Thank you for shopping with us. <br />However, the transaction wasn\'t successful, payment wasn\'t received.', 'cardlink-payment-gateway' );
+			$message_type   = 'error';
+			$message        = array( 'message' => $client_message, 'message_type' => $message_type );
+			self::generic_add_meta( $orderid, '_cardlink_message', $message );
+			$order->update_status( 'failed', 'REFUSED ' . $message );
+		} else if ( $status == 'ERROR' ) {
+			$client_message = __( 'Thank you for shopping with us. <br />However, the transaction wasn\'t successful, payment wasn\'t received.', 'cardlink-payment-gateway' );
+			$message_type   = 'error';
+			$message        = array( 'message' => $client_message, 'message_type' => $message_type );
+			self::generic_add_meta( $orderid, '_cardlink_message', $message );
+			$order->update_status( 'failed', 'ERROR ' . $message );
+		} else {
+			$client_message = __( 'Thank you for shopping with us. <br />However, the transaction wasn\'t successful, payment wasn\'t received.', 'cardlink-payment-gateway' );
+			$message_type   = 'error';
+			$message        = array( 'message' => $client_message, 'message_type' => $message_type );
+			self::generic_add_meta( $orderid, '_cardlink_message', $message );
+			$order->update_status( 'failed', 'Unknown: ' . $message );
+		}
+
+		return $order;
+	}
+	static function process_payment($order_id, $post_data, $method_id) {
+		$order  = new WC_Order( $order_id );
+		$doseis = isset( $post_data[ esc_attr( $method_id ) . '-card-doseis' ] ) ? intval( $post_data[ esc_attr( $method_id ) . '-card-doseis' ] ) : '';
+		if ( $doseis > 0 ) {
+			self::generic_add_meta( $order_id, '_doseis', $doseis );
+		}
+
+		$store_card = isset( $post_data[ esc_attr( $method_id ) . '-card-store' ] ) ? intval( $post_data[ esc_attr( $method_id ) . '-card-store' ] ) : 0;
+		self::generic_add_meta( $order_id, '_cardlink_store_card', $store_card );
+
+		$selected_card = isset( $post_data[ esc_attr( $method_id ) . '-card' ] ) ? intval( $post_data[ esc_attr( $method_id ) . '-card' ] ) : 0;
+		self::generic_add_meta( $order_id, '_cardlink_card', $selected_card );
+
+		$current_version = get_option( 'woocommerce_version', null );
+		if ( version_compare( $current_version, '2.2.0', '<' ) ) { //older version
+			return array(
+				'result'   => 'success',
+				'redirect' => add_query_arg( 'order', $order->id, add_query_arg( 'key', $order->order_key, get_permalink( woocommerce_get_page_id( 'pay' ) ) ) )
+			);
+		} else if ( version_compare( $current_version, '2.4.0', '<' ) ) { //older version
+			return array
+			(
+				'result'   => 'success',
+				'redirect' => add_query_arg( 'order-pay', $order->id, add_query_arg( 'key', $order->order_key, get_permalink( woocommerce_get_page_id( 'pay' ) ) ) )
+			);
+		} else if ( version_compare( $current_version, '3.0.0', '<' ) ) { //older version
+			return array
+			(
+				'result'   => 'success',
+				'redirect' => add_query_arg( 'order-pay', $order->id, add_query_arg( 'key', $order->order_key, wc_get_page_permalink( 'checkout' ) ) )
+			);
+		} else {
+			return array(
+				'result'   => 'success',
+				'redirect' => add_query_arg( 'order-pay', $order->get_id(), add_query_arg( 'key', $order->get_order_key(), wc_get_page_permalink( 'checkout' ) ) )
+			);
+		}
+	}
+
+}
+
+/**
  *  Gateway Class
  */
 class Cardlink_Payment_Gateway_Woocommerce extends WC_Payment_Gateway {
 
+	static $_instance;
 	public $id;
 	public $has_fields;
 	public $notify_url;
@@ -33,6 +313,13 @@ class Cardlink_Payment_Gateway_Woocommerce extends WC_Payment_Gateway {
 
 	public $api_request_url = 'Cardlink_Payment_Gateway_Woocommerce';
 	public $table_name = 'cardlink_gateway_transactions';
+
+	public static function instance() {
+		if ( is_null( self::$_instance ) ) {
+			self::$_instance = new self();
+		}
+		return self::$_instance;
+	}
 
 	public function __construct() {
 
@@ -76,7 +363,6 @@ class Cardlink_Payment_Gateway_Woocommerce extends WC_Payment_Gateway {
 			'check_cardlink_response'
 		) );
 
-
 		if ( $this->acquirer == 0 ) {
 			$this->icon = apply_filters( 'cardlink_icon', plugins_url() . '/cardlink-payment-gateway/public/img/cardlink.png' );
 		} elseif ( $this->acquirer == 1 ) {
@@ -87,9 +373,6 @@ class Cardlink_Payment_Gateway_Woocommerce extends WC_Payment_Gateway {
 
 	}
 
-	/**
-	 *  Admin Panel Options
-	 */
 	public function admin_options() {
 		echo '<h2>' . esc_html( $this->get_method_title() );
 		wc_back_link( __( 'Return to payments', 'woocommerce' ), admin_url( 'admin.php?page=wc-settings&tab=checkout' ) );
@@ -100,15 +383,6 @@ class Cardlink_Payment_Gateway_Woocommerce extends WC_Payment_Gateway {
 		echo '</table>';
 	}
 
-	function register_session() {
-		if ( ! session_id() ) {
-			session_start();
-		}
-	}
-
-	/**
-	 * Initialise Gateway Settings Form Fields
-	 * */
 	function init_form_fields() {
 
 		$this->form_fields = array(
@@ -129,7 +403,7 @@ class Cardlink_Payment_Gateway_Woocommerce extends WC_Payment_Gateway {
 			'acquirer'               => array(
 				'title'       => __( 'Select Acquirer', 'cardlink-payment-gateway' ),
 				'type'        => 'select',
-				'options'     => $this->get_acquirers(),
+				'options'     => Cardlink_Payment_Gateway_Woocommerce_Helper::get_acquirers(),
 				'description' => __( 'Select your acquirer bank', 'cardlink-payment-gateway' )
 			),
 			'title'                  => array(
@@ -239,15 +513,6 @@ class Cardlink_Payment_Gateway_Woocommerce extends WC_Payment_Gateway {
 		$page_list[ - 1 ] = __( 'Thank you page', 'cardlink-payment-gateway' );
 
 		return $page_list;
-	}
-
-	function get_acquirers() {
-
-		return [
-			'Cardlink Checkout',
-			'Nexi Checkout',
-			'Worldline Greece Checkout'
-		];
 	}
 
 	function get_installments() {
@@ -383,13 +648,6 @@ class Cardlink_Payment_Gateway_Woocommerce extends WC_Payment_Gateway {
 		return ob_get_clean();
 	}
 
-	function calculate_digest( $input ) {
-
-		$digest = base64_encode( hash( 'sha256', ( $input ), true ) );
-
-		return $digest;
-	}
-
 	function generate_cardlink_form( $order_id ) {
 
 		global $wpdb;
@@ -403,32 +661,8 @@ class Cardlink_Payment_Gateway_Woocommerce extends WC_Payment_Gateway {
 
 		$version  = 2;
 		$currency = 'EUR';
-		$post_url = '';
-		if ( $this->environment == "yes" ) {
-			switch ( $this->acquirer ) {
-				case 0 :
-					$post_url = "https://ecommerce-test.cardlink.gr/vpos/shophandlermpi";
-					break;
-				case 1 :
-					$post_url = "https://alphaecommerce-test.cardlink.gr/vpos/shophandlermpi";
-					break;
-				case 2 :
-					$post_url = "https://eurocommerce-test.cardlink.gr/vpos/shophandlermpi";
-					break;
-			}
-		} else {
-			switch ( $this->acquirer ) {
-				case 0 :
-					$post_url = "https://ecommerce.cardlink.gr/vpos/shophandlermpi";
-					break;
-				case 1 :
-					$post_url = "https://www.alphaecommerce.gr/vpos/shophandlermpi";
-					break;
-				case 2 :
-					$post_url = "https://vpos.eurocommerce.gr/vpos/shophandlermpi";
-					break;
-			}
-		}
+		$post_url = Cardlink_Payment_Gateway_Woocommerce_Helper::get_post_url( $this->environment, $this->acquirer );
+
 
 		if ( $this->transaction_type == 'yes' ) {
 			$trType = 2;
@@ -567,7 +801,7 @@ class Cardlink_Payment_Gateway_Woocommerce extends WC_Payment_Gateway {
 
 		$form_secret = $this->shared_secret_key;
 		$form_data   = iconv( 'utf-8', 'utf-8//IGNORE', implode( "", $form_data_array ) ) . $form_secret;
-		$digest      = $this->calculate_digest( $form_data );
+		$digest      = Cardlink_Payment_Gateway_Woocommerce_Helper::calculate_digest( $form_data );
 
 		if ( $this->enable_log == 'yes' ) {
 			error_log( '---- Cardlink Transaction digest -----' );
@@ -630,45 +864,8 @@ class Cardlink_Payment_Gateway_Woocommerce extends WC_Payment_Gateway {
 		return $html;
 	}
 
-
 	function process_payment( $order_id ) {
-
-		$order  = new WC_Order( $order_id );
-		$doseis = isset( $_POST[ esc_attr( $this->id ) . '-card-doseis' ] ) ? intval( $_POST[ esc_attr( $this->id ) . '-card-doseis' ] ) : '';
-		if ( $doseis > 0 ) {
-			$this->generic_add_meta( $order_id, '_doseis', $doseis );
-		}
-
-		$store_card = isset( $_POST[ esc_attr( $this->id ) . '-card-store' ] ) ? intval( $_POST[ esc_attr( $this->id ) . '-card-store' ] ) : 0;
-		$this->generic_add_meta( $order_id, '_cardlink_store_card', $store_card );
-
-		$selected_card = isset( $_POST[ esc_attr( $this->id ) . '-card' ] ) ? intval( $_POST[ esc_attr( $this->id ) . '-card' ] ) : 0;
-		$this->generic_add_meta( $order_id, '_cardlink_card', $selected_card );
-
-		$current_version = get_option( 'woocommerce_version', null );
-		if ( version_compare( $current_version, '2.2.0', '<' ) ) { //older version
-			return array(
-				'result'   => 'success',
-				'redirect' => add_query_arg( 'order', $order->id, add_query_arg( 'key', $order->order_key, get_permalink( woocommerce_get_page_id( 'pay' ) ) ) )
-			);
-		} else if ( version_compare( $current_version, '2.4.0', '<' ) ) { //older version
-			return array
-			(
-				'result'   => 'success',
-				'redirect' => add_query_arg( 'order-pay', $order->id, add_query_arg( 'key', $order->order_key, get_permalink( woocommerce_get_page_id( 'pay' ) ) ) )
-			);
-		} else if ( version_compare( $current_version, '3.0.0', '<' ) ) { //older version
-			return array
-			(
-				'result'   => 'success',
-				'redirect' => add_query_arg( 'order-pay', $order->id, add_query_arg( 'key', $order->order_key, wc_get_page_permalink( 'checkout' ) ) )
-			);
-		} else {
-			return array(
-				'result'   => 'success',
-				'redirect' => add_query_arg( 'order-pay', $order->get_id(), add_query_arg( 'key', $order->get_order_key(), wc_get_page_permalink( 'checkout' ) ) )
-			);
-		}
+		return Cardlink_Payment_Gateway_Woocommerce_Helper::process_payment($order_id, $_POST, $this->id );
 	}
 
 	function receipt_page( $order ) {
@@ -676,169 +873,15 @@ class Cardlink_Payment_Gateway_Woocommerce extends WC_Payment_Gateway {
 		echo $this->generate_cardlink_form( $order );
 	}
 
-	/**
-	 * Verify a successful Payment!
-	 * */
 	function check_cardlink_response() {
 
-		global $woocommerce;
+		$post_data = $_POST;
+		$enable_log = $this->enable_log;
+		$shared_secret_key = $this->shared_secret_key;
+		$order_note = $this->order_note;
+		$id = $this->id;
 
-		if ( $this->enable_log == 'yes' ) {
-			error_log( '---- eCommerce Response -----' );
-			error_log( print_r( $_POST, true ) );
-			error_log( '---- End of eCommerce Response ----' );
-		}
-
-		$mid = filter_var( $_POST['mid'], FILTER_SANITIZE_NUMBER_INT );
-
-		$orderid_session = WC()->session->get( 'order_id' );
-		$orderid_post    = filter_var( $_POST['orderid'], FILTER_SANITIZE_STRING );
-
-		$reg = preg_match( '/^(.*?)at/', $orderid = $orderid_post, $matches );
-
-		if ( ! empty( $matches ) ) {
-			$orderid = $matches[1];
-		} else {
-			$orderid = $orderid_session;
-		}
-
-		if ( $orderid == '' ) {
-			$orderid = $orderid_post;
-			error_log( "Cardlink: something went wrong with order id " );
-			error_log( print_r( $_POST, true ) );
-			error_log( print_r( $matches, true ) );
-			error_log( $orderid_session );
-		}
-
-		$status         = filter_var( $_POST['status'], FILTER_SANITIZE_STRING );
-		$orderAmount    = filter_var( $_POST['orderAmount'], FILTER_SANITIZE_NUMBER_FLOAT );
-		$currency       = filter_var( $_POST['currency'], FILTER_SANITIZE_STRING );
-		$paymentTotal   = filter_var( $_POST['paymentTotal'], FILTER_SANITIZE_NUMBER_FLOAT );
-		$message        = isset( $_POST['message'] ) ? filter_var( $_POST['message'], FILTER_SANITIZE_STRING ) : '';
-		$riskScore      = isset( $_POST['riskScore'] ) ? filter_var( $_POST['riskScore'], FILTER_SANITIZE_NUMBER_FLOAT ) : '';
-		$payMethod      = isset( $_POST['payMethod'] ) ? filter_var( $_POST['payMethod'], FILTER_SANITIZE_STRING ) : '';
-		$txId           = isset( $_POST['txId'] ) ? filter_var( $_POST['txId'], FILTER_SANITIZE_NUMBER_FLOAT ) : '';
-		$paymentRef     = isset( $_POST['paymentRef'] ) ? filter_var( $_POST['paymentRef'], FILTER_SANITIZE_STRING ) : '';
-		$extToken       = isset( $_POST['extToken'] ) ? filter_var( $_POST['extToken'], FILTER_SANITIZE_STRING ) : '';
-		$extTokenPanEnd = isset( $_POST['extTokenPanEnd'] ) ? filter_var( $_POST['extTokenPanEnd'], FILTER_SANITIZE_STRING ) : '';
-		$extTokenExp    = isset( $_POST['extTokenExp'] ) ? $_POST['extTokenExp'] : '';
-		$digest         = filter_var( $_POST['digest'], FILTER_SANITIZE_STRING );
-
-		$extTokenExpYear  = substr( $extTokenExp, 0, 4 );
-		$extTokenExpMonth = substr( $extTokenExp, 4, 2 );
-
-		$form_data = '';
-		foreach ( $_POST as $k => $v ) {
-			if ( ! in_array( $k, array( '_charset_', 'digest', 'submitButton' ) ) ) {
-				$form_data .= filter_var( $_POST[ $k ], FILTER_SANITIZE_STRING );
-			}
-		}
-
-		$form_data       .= $this->shared_secret_key;
-		$computed_digest = $this->calculate_digest( $form_data );
-
-		$order           = new WC_Order( $orderid );
-		$current_user_id = $order->get_user_id();
-		$message         = array( 'message' => '', 'message_type' => '' );
-
-		if ( $digest != $computed_digest ) {
-			$message      = __( 'A technical problem occured. <br />The transaction wasn\'t successful, payment wasn\'t received.', 'cardlink-payment-gateway' );
-			$message_type = 'error';
-			$message      = array( 'message' => $message, 'message_type' => $message_type );
-			$this->generic_add_meta( $orderid, '_cardlink_message', $message );
-			$order->update_status( 'failed', 'DIGEST' );
-			if ( version_compare( WOOCOMMERCE_VERSION, '2.5', '<' ) ) {
-				$checkout_url = $woocommerce->cart->get_checkout_url();
-			} else {
-				$checkout_url = wc_get_checkout_url();
-			}
-			wp_redirect( $checkout_url );
-			exit;
-		}
-
-		update_post_meta( $orderid, 'redirected_for_payment', false );
-
-		if ( $status == 'CAPTURED' || $status == 'AUTHORIZED' ) {
-			$order->payment_complete( $paymentRef );
-
-			if ( $order->get_status() == 'processing' ) {
-
-				$order->add_order_note( __( 'Payment Via Cardlink<br />Transaction ID: ', 'cardlink-payment-gateway' ) . $paymentRef );
-				$message = __( 'Thank you for shopping with us.<br />Your transaction was successful, payment was received.<br />Your order is currently being processed.', 'cardlink-payment-gateway' );
-
-				if ( $this->order_note == 'yes' ) {
-					$order->add_order_note( __( 'Payment Received.<br />Your order is currently being processed.<br />We will be shipping your order to you soon.<br />Cardlink ID: ', 'cardlink-payment-gateway' ) . $paymentRef, 1 );
-
-				}
-			} else if ( $order->get_status() == 'completed' ) {
-				$message = __( 'Thank you for shopping with us.<br />Your transaction was successful, payment was received.<br />Your order is now complete.', 'cardlink-payment-gateway' );
-				if ( $this->order_note == 'yes' ) {
-					$order->add_order_note( __( 'Payment Received.<br />Your order is now complete.<br />Cardlink Transaction ID: ', 'cardlink-payment-gateway' ) . $paymentRef, 1 );
-				}
-			}
-
-			$tokens      = WC_Payment_Tokens::get_customer_tokens( $current_user_id, $this->id );
-			$token_class = new WC_Payment_Token_Data_Store;
-			$card_exist  = false;
-			foreach ( $tokens as $key => $tok ) {
-				$token_meta = $token_class->get_metadata( $key );
-				if ( $token_meta['card_type'][0] == $payMethod && $token_meta['last4'][0] == $extTokenPanEnd && $token_meta['expiry_year'][0] == $extTokenExpYear && $token_meta['expiry_month'][0] == $extTokenExpMonth ) {
-					$card_exist = true;
-				}
-			}
-
-			if ( $extToken && ! $card_exist ) {
-				// Build the token
-				$token = new WC_Payment_Token_CC();
-				$token->set_token( $extToken ); // Token comes from payment processor
-				$token->set_gateway_id( $this->id );
-				$token->set_last4( $extTokenPanEnd );
-				$token->set_expiry_year( $extTokenExpYear );
-				$token->set_expiry_month( $extTokenExpMonth );
-				$token->set_card_type( $payMethod );
-				$token->set_user_id( $current_user_id );
-				// Save the new token to the database
-				$token->save();
-				// Set this token as the users new default token
-				WC_Payment_Tokens::set_users_default( $current_user_id, $token->get_id() );
-			}
-
-			$message_type = 'success';
-
-			$message = array( 'message' => $message, 'message_type' => $message_type );
-
-			$this->generic_add_meta( $orderid, '_cardlink_message', $message );
-
-			WC()->cart->empty_cart();
-
-		} else if ( $status == 'CANCELED' ) {
-			$message = array(
-				'message'      => __( 'Thank you for shopping with us. <br />However, the transaction wasn\'t successful, payment was cancelled.', 'cardlink-payment-gateway' ),
-				'message_type' => 'notice'
-			);
-			$this->generic_add_meta( $orderid, '_cardlink_message', $message );
-			$order->update_status( 'failed', 'ERROR ' . $message['message'] );
-
-		} else if ( $status == 'REFUSED' ) {
-			$client_message = __( 'Thank you for shopping with us. <br />However, the transaction wasn\'t successful, payment wasn\'t received.', 'cardlink-payment-gateway' );
-			$message_type   = 'error';
-			$message        = array( 'message' => $client_message, 'message_type' => $message_type );
-			$this->generic_add_meta( $orderid, '_cardlink_message', $message );
-			$order->update_status( 'failed', 'REFUSED ' . $message );
-		} else if ( $status == 'ERROR' ) {
-			$client_message = __( 'Thank you for shopping with us. <br />However, the transaction wasn\'t successful, payment wasn\'t received.', 'cardlink-payment-gateway' );
-			$message_type   = 'error';
-			$message        = array( 'message' => $client_message, 'message_type' => $message_type );
-			$this->generic_add_meta( $orderid, '_cardlink_message', $message );
-			$order->update_status( 'failed', 'ERROR ' . $message );
-		} else {
-			$client_message = __( 'Thank you for shopping with us. <br />However, the transaction wasn\'t successful, payment wasn\'t received.', 'cardlink-payment-gateway' );
-			$message_type   = 'error';
-			$message        = array( 'message' => $client_message, 'message_type' => $message_type );
-			$this->generic_add_meta( $orderid, '_cardlink_message', $message );
-			$order->update_status( 'failed', 'Unknown: ' . $message );
-		}
-
+		$order = Cardlink_Payment_Gateway_Woocommerce_Helper::check_response( $post_data, $enable_log, $shared_secret_key, $order_note, $id );
 
 		if ( $this->redirect_page_id == "-1" ) {
 			$redirect_url = $this->get_return_url( $order );
@@ -850,13 +893,274 @@ class Cardlink_Payment_Gateway_Woocommerce extends WC_Payment_Gateway {
 		exit;
 	}
 
-	function generic_add_meta( $orderid, $key, $value ) {
-		$order = new WC_Order( $orderid );
-		if ( method_exists( $order, 'add_meta_data' ) && method_exists( $order, 'save_meta_data' ) ) {
-			$order->add_meta_data( $key, $value, true );
-			$order->save_meta_data();
-		} else {
-			update_post_meta( $orderid, $key, $value );
-		}
-	}
 }
+
+class Cardlink_Payment_Gateway_Woocommerce_Iris extends WC_Payment_Gateway {
+	public $id;
+	public $has_fields;
+	public $method_title;
+	public $method_description;
+	public $title;
+	public $description;
+	public $environment;
+	public $merchant_id;
+	public $acquirer;
+	public $shared_secret_key;
+	public $iris_customer_code;
+	public $popup;
+	public $enable_log;
+	public $api_request_url = 'Cardlink_Payment_Gateway_Woocommerce_Iris';
+	public $table_name = 'cardlink_gateway_transactions';
+	public function __construct() {
+
+		$this->id                 = 'cardlink_payment_gateway_woocommerce_iris';
+		$this->has_fields         = true;
+		$this->method_title       = __( 'Cardlink Payment Gateway Iris', 'cardlink-payment-gateway' );
+		$this->method_description = __( 'Cardlink Payment Gateway allows you to accept payment through IRIS on your Woocommerce Powered Site.', 'cardlink-payment-gateway' );
+
+		// Load the form fields.
+		$this->init_form_fields();
+
+		// Load the settings
+		$this->init_settings();
+
+		// Define User set Variables
+		$this->title                  = sanitize_text_field( $this->get_option( 'title' ) );
+		$this->description            = sanitize_text_field( $this->get_option( 'description' ) );
+		$this->iris_customer_code     = sanitize_text_field( $this->get_option( 'iris_customer_code' ) );
+
+		add_action( 'woocommerce_receipt_' . $this->id, array( $this, 'receipt_page_iris' ) );
+		add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array(
+			$this,
+			'process_admin_options'
+		) );
+
+	}
+
+	public function init_form_fields() {
+		$this->form_fields = array(
+			'enabled'                => array(
+				'title'       => __( 'Enable/Disable', 'cardlink-payment-gateway' ),
+				'type'        => 'checkbox',
+				'label'       => __( 'Enable Cardlink Payment Gateway', 'cardlink-payment-gateway' ),
+				'description' => __( 'Enable or disable the gateway.', 'cardlink-payment-gateway' ),
+				'desc_tip'    => true,
+				'default'     => 'yes'
+			),
+			'title'                  => array(
+				'title'       => __( 'Title', 'cardlink-payment-gateway' ),
+				'type'        => 'text',
+				'description' => __( 'This controls the title which the user sees during checkout.', 'cardlink-payment-gateway' ),
+				'desc_tip'    => true,
+				'default'     => __( 'Credit card via Cardlink', 'cardlink-payment-gateway' )
+			),
+			'description'            => array(
+				'title'       => __( 'Description', 'cardlink-payment-gateway' ),
+				'type'        => 'textarea',
+				'description' => __( 'This controls the description which the user sees during checkout.', 'cardlink-payment-gateway' ),
+				'desc_tip'    => true,
+				'default'     => __( 'Pay Via Cardlink: Accepts Visa, Mastercard, Maestro, American Express, Diners, Discover.', 'cardlink-payment-gateway' )
+			),
+			'iris_customer_code'=> array(
+				'title'       => __( 'IRIS customer code', 'cardlink-payment-gateway' ),
+				'type'        => 'text',
+				'description' => __( 'Enter Your IRIS customer code', 'cardlink-payment-gateway' ),
+				'default'     => '',
+				'desc_tip'    => true
+			)
+		);
+	}
+
+	public function receipt_page_iris( $order ) {
+		echo '<p>' . __( 'Thank you for your order. We are now redirecting you to make payment.', 'cardlink-payment-gateway' ) . '</p>';
+		echo $this->generate_cardlink_form( $order );
+	}
+
+	public function generate_cardlink_form( $order_id ) {
+
+		global $wpdb;
+
+		$locale = get_locale();
+		if ( $locale == 'el' ) {
+			$lang = 'el';
+		} else {
+			$lang = 'en';
+		}
+
+		$version  = 2;
+		$currency = 'EUR';
+
+		$payment_Gateway = Cardlink_Payment_Gateway_Woocommerce::instance();
+		$this->environment 			= $payment_Gateway->environment;
+		$this->merchant_id 			= $payment_Gateway->merchant_id;
+		$this->acquirer 			= $payment_Gateway->acquirer;
+		$this->shared_secret_key 	= $payment_Gateway->shared_secret_key;
+		$this->enable_log 			= $payment_Gateway->enable_log;
+		$this->api_request_url      = $payment_Gateway->api_request_url;
+
+		$post_url = Cardlink_Payment_Gateway_Woocommerce_Helper::get_post_url( $this->environment, $this->acquirer );
+
+		$order = new WC_Order( $order_id );
+
+		$countries_obj        = new WC_Countries();
+		$country              = $order->get_billing_country();
+		$country_states_array = $countries_obj->get_states();
+		$state_code           = $order->get_billing_state();
+		$state                = $country_states_array[ $country ][ $state_code ];
+
+		$wpdb->insert( $wpdb->prefix . $this->table_name, array(
+			'trans_ticket'      => $order_id,
+			'merchantreference' => $order_id,
+			'timestamp'         => current_time( 'mysql', 1 )
+		) );
+
+		$_SESSION['order_id'] = $order_id;
+		WC()->session->set( 'order_id', $order_id );
+
+		if ( $country != 'GR' ) {
+				$form_data_array = array(
+					'version'     => $version,
+					'mid'         => $this->merchant_id,
+					'lang'        => $lang,
+					'orderid'     => $order_id . 'at' . date( 'Ymdhisu' ),
+					'orderDesc'   => $this->get_rf_code( $order_id ),
+					'orderAmount' => $order->get_total(),
+					'currency'    => $currency,
+					'payerEmail'  => $order->get_billing_email(),
+					'billCountry' => $country,
+					'billState'   => $state_code,
+					'billZip'     => $order->get_billing_postcode(),
+					'billCity'    => $order->get_billing_city(),
+					'billAddress' => $order->get_billing_address_1(),
+					'payMethod'   => 'IRIS',
+					'confirmUrl'  => get_site_url() . "/?wc-api=" . $this->api_request_url . "&result=success",
+					'cancelUrl'   => get_site_url() . "/?wc-api=" . $this->api_request_url . "&result=failure",
+				);
+		} else {
+				$form_data_array = array(
+					'version'     => $version,
+					'mid'         => $this->merchant_id,
+					'lang'        => $lang,
+					'orderid'     => $order_id . 'at' . date( 'Ymdhisu' ),
+					'orderDesc'   => $this->get_rf_code( $order_id ),
+					'orderAmount' => $order->get_total(),
+					'currency'    => $currency,
+					'payerEmail'  => $order->get_billing_email(),
+					'billCountry' => $country,
+					'billZip'     => $order->get_billing_postcode(),
+					'billCity'    => $order->get_billing_city(),
+					'billAddress' => $order->get_billing_address_1(),
+					'payMethod'   => 'IRIS',
+					'confirmUrl'  => get_site_url() . "/?wc-api=" . $this->api_request_url . "&result=success",
+					'cancelUrl'   => get_site_url() . "/?wc-api=" . $this->api_request_url . "&result=failure",
+				);
+		}
+
+		$form_secret = $this->shared_secret_key;
+		$form_data   = iconv( 'utf-8', 'utf-8//IGNORE', implode( "", $form_data_array ) ) . $form_secret;
+		$digest      = Cardlink_Payment_Gateway_Woocommerce_Helper::calculate_digest( $form_data );
+
+		if ( $this->enable_log == 'yes' ) {
+			error_log( '---- Cardlink Transaction digest -----' );
+			error_log( 'Data: ' );
+			error_log( print_r( $form_data, true ) );
+			error_log( 'Digest: ' );
+			error_log( print_r( $digest, true ) );
+			error_log( '---- End of Cardlink Transaction digest ----' );
+		}
+
+		$form_target     = '_top';
+		$html            = '<form action="' . esc_url( $post_url ) . '" method="POST" id="payment_form" target="' . $form_target . '" accept-charset="UTF-8">';
+
+		foreach ( $form_data_array as $key => $value ) {
+			$html .= '<input type="hidden" id ="' . $key . '" name ="' . $key . '" value="' . iconv( 'utf-8', 'utf-8//IGNORE', $value ) . '"/>';
+		}
+
+		$html .= '<input type="hidden" id="digest" name ="digest" value="' . esc_attr( $digest ) . '"/>';
+		$html .= '<!-- Button Fallback -->
+            <div class="payment_buttons">
+                <input type="submit" class="button alt" id="submit_cardlink_payment_form" value="' . __( 'Pay via Cardlink', 'cardlink-payment-gateway' ) . '" /> 
+            </div>
+            <script type="text/javascript">
+                jQuery(".payment_buttons").hide();
+            </script>';
+		$html .= '</form>';
+		wc_enqueue_js( '
+		$.blockUI({
+			message: "' . esc_js( __( 'Thank you for your order. We are now redirecting you to make payment.', 'cardlink-payment-gateway' ) ) . '",
+			baseZ: 99999,
+			overlayCSS: {
+				background: "#fff",
+				opacity: 0.6
+			},
+			css: {
+				padding:        "20px",
+				zindex:         "9999999",
+				textAlign:      "center",
+				color:          "#555",
+				border:         "3px solid #aaa",
+				backgroundColor:"#fff",
+				cursor:         "wait",
+				lineHeight:		"24px",
+			}
+		});
+		' );
+		 wc_enqueue_js( "
+			$('#payment_form').submit();
+		" );
+
+		return $html;
+	}
+
+	public function get_option( $key, $empty_value = null ) {
+		$option_value = parent::get_option( $key, $empty_value );
+
+		return $option_value;
+	}
+
+	public function get_rf_code( $order_id ) {
+		$rf_payment_code = get_post_meta( $order_id, 'rf_payment_code', true );
+		if ( $rf_payment_code !== '' ) {
+		   return $rf_payment_code;
+		}
+
+		$order = new WC_Order( $order_id );
+		$order_total = $order->get_total();
+		/* calculate payment check code */
+		$paymentSum = 0;
+		if ( $order_total > 0 ) {
+		   $ordertotal = str_replace( [ ',' ], '.', (string) $order_total );
+		   $ordertotal = number_format( $ordertotal, 2, '', '' );
+		   $ordertotal = strrev( $ordertotal );
+		   $factor     = [ 1, 7, 3 ];
+		   $idx        = 0;
+		   for ( $i = 0; $i < strlen( $ordertotal ); $i ++ ) {
+			  $idx        = $idx <= 2 ? $idx : 0;
+			  $paymentSum += $ordertotal[ $i ] * $factor[ $idx ];
+			  $idx ++;
+		   }
+		}
+		$randomNumber 	 = $this->generateRandomString( 13, $order_id );
+		$paymentCode  	 = $paymentSum ? ( $paymentSum % 8 ) : '8';
+		$systemCode   	 = '12';
+		$tempCode     	 = $this->iris_customer_code . $paymentCode . $systemCode . $randomNumber . '271500';
+		$mod97        	 = bcmod( $tempCode, '97' );
+		$cd           	 = 98 - (int) $mod97;
+		$cd              = str_pad( (string) $cd, 2, '0', STR_PAD_LEFT );
+		$rf_payment_code = 'RF' . $cd . $this->iris_customer_code . $paymentCode . $systemCode . $randomNumber;
+		update_post_meta( $order_id, 'rf_payment_code', $rf_payment_code );
+		return $rf_payment_code;
+	}
+
+	public function generateRandomString( $length = 22, $order_id = 0 ) {
+		return str_pad( $order_id, $length, '0', STR_PAD_LEFT );
+	}
+
+	function process_payment( $order_id ) {
+		return Cardlink_Payment_Gateway_Woocommerce_Helper::process_payment($order_id, $_POST, $this->id );
+	}
+
+}
+
+
+

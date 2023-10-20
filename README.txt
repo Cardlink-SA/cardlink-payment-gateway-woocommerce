@@ -48,6 +48,10 @@ Here are the detailed instructions to manually install a WordPress plugin by tra
 
 == Changelog ==
 
+= 1.0.7 =
+* Add IRIS payment method.
+= 1.0.6 =
+* Support Alpha bonus transactions.
 = 1.0.5 =
 * Bugfix: Fix compatibility issues with Payment Plugins for Stripe WooCommerce and Payment Plugins for PayPal WooCommerce plugins
 = 1.0.4 =

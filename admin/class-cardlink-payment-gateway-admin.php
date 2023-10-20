@@ -120,7 +120,7 @@ class Cardlink_Payment_Gateway_Admin {
 		} else {
 			$payment_method = $order->payment_method;
 		}
-		if ( is_order_received_page() && ( 'cardlink_payment_gateway_woocommerce' == $payment_method ) ) {
+		if ( is_order_received_page() && ( 'cardlink_payment_gateway_woocommerce' == $payment_method || 'cardlink_payment_gateway_woocommerce_iris' == $payment_method ) ) {
 			if ( method_exists( $order, 'get_meta' ) ) {
 				$cardlink_message = $order->get_meta( '_cardlink_message', true );
 			} else {
@@ -143,6 +143,7 @@ class Cardlink_Payment_Gateway_Admin {
 	public function woocommerce_add_cardlink_gateway( $methods ) {
 
 		$methods[] = 'Cardlink_Payment_Gateway_Woocommerce';
+		$methods[] = 'Cardlink_Payment_Gateway_Woocommerce_Iris';
 
 		// $methods[] = 'WC_cardlink_Gateway_masterpass';
 
