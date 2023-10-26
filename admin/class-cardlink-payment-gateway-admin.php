@@ -143,7 +143,6 @@ class Cardlink_Payment_Gateway_Admin {
 	public function woocommerce_add_cardlink_gateway( $methods ) {
 
 		$methods[] = 'Cardlink_Payment_Gateway_Woocommerce';
-		$methods[] = 'Cardlink_Payment_Gateway_Woocommerce_Iris';
 
 		// $methods[] = 'WC_cardlink_Gateway_masterpass';
 
