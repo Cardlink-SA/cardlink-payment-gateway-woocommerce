@@ -159,7 +159,6 @@ class Cardlink_Payment_Gateway {
 		$this->loader->add_action( 'plugins_loaded', $plugin_admin, 'load_payment_gateway' );
 		$this->loader->add_action( 'wp', $plugin_admin, 'cardlink_message' );
 		$this->loader->add_action( 'woocommerce_payment_gateways', $plugin_admin, 'woocommerce_add_cardlink_gateway' );
-
 	}
 
 	/**
@@ -176,6 +175,7 @@ class Cardlink_Payment_Gateway {
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
 		$this->loader->add_action( 'plugins_loaded', $plugin_public, 'delete_payment_token' );
+		$this->loader->add_filter( 'woocommerce_billing_fields', $plugin_public, 'woocommerce_make_phone_number_required', 15, 1 );
 
 	}
 

@@ -21,10 +21,6 @@ class Cardlink_Payment_Gateway_Delete {
 
 		$this->success_url              = get_site_url() . "/?wc-api=" . $this->api_request_url . "&result=success";
 		$this->fail_url                 = get_site_url() . "/?wc-api=" . $this->api_request_url . "&result=success";
-		//$payment_gateways               = WC_Payment_Gateways::instance();
-		//$this->payment_gateway_instance = $payment_gateways->payment_gateways()['cardlink_payment_gateway_woocommerce'];
-		//$this->payment_gateway_instance	= WC()->payment_gateways->payment_gateways()['cardlink_payment_gateway_woocommerce'];
-		//$this->redirect_page_id         = $this->payment_gateway_instance->get_option( 'redirect_page_id' );
 
 		add_action( 'wp_ajax_delete_token', array( &$this, 'delete_token' ) );
 		add_action( 'wp_ajax_set_redirection_status', array( &$this, 'set_redirection_status' ) );
