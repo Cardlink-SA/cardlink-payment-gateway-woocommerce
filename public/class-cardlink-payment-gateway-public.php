@@ -137,16 +137,4 @@ class Cardlink_Payment_Gateway_Public {
 
 	}
 
-	public function woocommerce_make_phone_number_required( $address_fields ) {
-
-		if (!array_key_exists('billing_phone', $address_fields)) {
-			$address_fields['billing_phone']['required'] = true;
-			$address_fields['billing_phone']['label'] = __( 'Phone', 'woocommerce' );
-		} else {
-			$address_fields['billing_phone']['required'] = true;
-		}
-
-		return $address_fields;
-	}
-
 }
