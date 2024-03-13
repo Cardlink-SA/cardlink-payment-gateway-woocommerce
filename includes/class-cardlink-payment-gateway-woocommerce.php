@@ -364,11 +364,11 @@ class Cardlink_Payment_Gateway_Woocommerce extends WC_Payment_Gateway {
 		) );
 
 		if ( $this->acquirer == 0 ) {
-			$this->icon = apply_filters( 'cardlink_icon', plugins_url() . '/cardlink-payment-gateway/public/img/cardlink.png' );
+			$this->icon = apply_filters( 'cardlink_icon', plugins_url() . '/cardlink-payment-gateway-woocommerce/public/img/cardlink.png' );
 		} elseif ( $this->acquirer == 1 ) {
-			$this->icon = apply_filters( 'cardlink_icon', plugins_url() . '/cardlink-payment-gateway/public/img/cardlink.png' );
+			$this->icon = apply_filters( 'cardlink_icon', plugins_url() . '/cardlink-payment-gateway-woocommerce/public/img/cardlink.png' );
 		} elseif ( $this->acquirer == 2 ) {
-			$this->icon = apply_filters( 'cardlink_icon', plugins_url() . '/cardlink-payment-gateway/public/img/cardlink.png' );
+			$this->icon = apply_filters( 'cardlink_icon', plugins_url() . '/cardlink-payment-gateway-woocommerce/public/img/cardlink.png' );
 		}
 
 	}
