@@ -1,34 +1,53 @@
-=== Cardlink Payment Gateway ===
-Contributors: cardlink
-Tags: payments, payment-gateway
-Requires at least: 5.8.3
-Tested up to: 6.5.2
-Stable tag: 6.5.2
-Requires PHP: 7.4
-License: GPLv2 or later
-License URI: http://www.gnu.org/licenses/gpl-2.0.html
+# Cardlink Checkout Payment Gateway
 
-Cardlink Payment Gateway allows you to accept payment through various schemes such as Visa, Mastercard, Maestro, American Express, Diners, Discover cards on your website.
+- Contributors: cardlink
+- Tags: payments, payment-gateway
+- Requires at least: 5.8.3
+- Tested up to: 6.5.2
+- Requires PHP: 7.x - 8.x
+- License: GPLv2 or later
+- License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-== Description ==
+
+## Changelog
+
+- **1.0.6**
+    - Support Alpha bonus transactions.
+- **1.0.5**
+    - Bugfix: Fix compatibility issues with Payment Plugins for Stripe WooCommerce and Payment Plugins for PayPal WooCommerce plugins
+- **1.0.4**
+    - Bugfix: Check if WooCommerce is installed and activated before initialize plugin functionality
+- **1.0.3**
+    - Styling updates on iframe popup window
+- **1.0.2**
+    - Bugfix: Installments total number
+- **1.0.1**
+    - Compatibility updates
+- **1.0.0**
+    - Initial release
+
+
+## Description
 
 Cardlink Payment Gateway allows you to accept payment through various schemes such as Visa, Mastercard, Maestro, American Express, Diners, Discover cards on your website, with or without variable installments.
-This plugin aims to offer new payment solutions to Cardlink merchants through the use of CMS plugin for their website creation and provide the possibility to add extra features without having web development knowledge. 
+This plugin aims to offer new payment solutions to Cardlink merchants through the use of CMS plugin for their website creation and provide the possibility to add extra features without having web development knowledge.
 Merchants with e-shops (redirect cases only) will be able to integrate the Cardlink Payment Gateway to their checkout page using the CSS layout that they want. Also they could choose between redirect or iframe option for the payment enviroment. Once the payment is made, the customer returns to the online store and the order is updated.
-Once you have completed the requested tests and any changes to your website, you can activate your account and start accepting payments. 
+Once you have completed the requested tests and any changes to your website, you can activate your account and start accepting payments.
 
-== Features ==
+
+## Features
 
 1.	A dropdown option for instance between Worldline, Nexi και Cardlink.
 2.	Option to enable test environment. All transactions will be re-directed to the endpoint that represents the production environment by default. The endpoint will be different depending on which acquirer has been chosen from instance dropdown option.
 3.	Ability to define the maximum number of installments regardless the total order amount and ability to define the ranges of the total order amounts and the maximum installment  (up to 10 conditions) for every range.
 4.	Option for pre-authorization or sale transactions.
-5.	Option for a user tokenization service. The card token will be stored at the merchant’s e-shop database and will be used by customers to auto-complete future payments. 
+5.	Option for a user tokenization service. The card token will be stored at the merchant’s e-shop database and will be used by customers to auto-complete future payments.
 6.	Redirection option: user should have a checkbox to enable pop up with i-frame without redirection.
 7.	A text field for providing the absolute or relative (to Cardlink Payment Gateway location on server) url of custom CSS stylesheet, to change css styles in payment page.
 8.	Translation ready for Greek & English languages.
 
-== Installation ==
+
+## Installation
 
 If you have a copy of the plugin as a zip file, you can manually upload it and install it through the Plugins admin screen.
 1. Navigate to Plugins > Add New.
@@ -39,12 +58,16 @@ If you have a copy of the plugin as a zip file, you can manually upload it and i
 
 In rare cases, you may need to install a plugin by manually transferring the files onto the server. This is recommended only when absolutely necessary, for example when your server is not configured to allow automatic installations.
 This procedure requires you to be familiar with the process of transferring files using an SFTP client. It is recommended for advanced users and developers.
-Here are the detailed instructions to manually install a WordPress plugin by transferring the files onto the webserver. 
+Here are the detailed instructions to manually install a WordPress plugin by transferring the files onto the webserver.
 
-== Screenshots ==
+
+## Screenshots
 
 1. The Cardlink Payment Gateway settings screen used to configure the main Cardlink gateway.
+   ![image001](https://developer.cardlink.gr/downloads/cardlink-payment-gateway-woocommerce-assets/image001.jpg)
 2. This is the front-end of Cardlink Payment Gateway plugin located in checkout page.
+   ![image002](https://developer.cardlink.gr/downloads/cardlink-payment-gateway-woocommerce-assets/image002.jpg)
 
-== Changelog ==
+##  Support tickets
 
+In case that you face any technical issue during the installation process, you can contact the Cardlink e-commerce team at ecommerce_support@cardlink.gr .
