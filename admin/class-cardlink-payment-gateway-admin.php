@@ -53,6 +53,8 @@ class Cardlink_Payment_Gateway_Admin {
 		$this->plugin_name = $plugin_name;
 		$this->version     = $version;
 
+		add_filter( 'admin_body_class', [ $this, 'admin_body_class'] );
+
 	}
 
 	/**
@@ -120,7 +122,7 @@ class Cardlink_Payment_Gateway_Admin {
 		} else {
 			$payment_method = $order->payment_method;
 		}
-		if ( is_order_received_page() && ( 'cardlink_payment_gateway_woocommerce' == $payment_method || 'cardlink_payment_gateway_woocommerce_iris' == $payment_method ) ) {
+		if ( is_order_received_page() && ( 'cardlink_payment_gateway_woocommerce' == $payment_method ) ) {
 			if ( method_exists( $order, 'get_meta' ) ) {
 				$cardlink_message = $order->get_meta( '_cardlink_message', true );
 			} else {
@@ -143,11 +145,33 @@ class Cardlink_Payment_Gateway_Admin {
 	public function woocommerce_add_cardlink_gateway( $methods ) {
 
 		$methods[] = 'Cardlink_Payment_Gateway_Woocommerce';
-		//$methods[] = 'Cardlink_Payment_Gateway_Woocommerce_Iris';
-
-		// $methods[] = 'WC_cardlink_Gateway_masterpass';
 
 		return $methods;
+	}
+
+	public static function woocommerce_gateway_block_support() {
+		if ( class_exists( 'Automattic\WooCommerce\Blocks\Payments\Integrations\AbstractPaymentMethodType' ) ) {
+			require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/blocks/class-wc-cardlink-payments-block.php';
+			add_action(
+				'woocommerce_blocks_payment_method_type_registration',
+				function( Automattic\WooCommerce\Blocks\Payments\PaymentMethodRegistry $payment_method_registry ) {
+					$payment_method_registry->register( new WC_Gateway_Cardlink_Blocks_Support() );
+				}
+			);
+
+		}
+	}
+
+	public function admin_body_class($classes) {
+
+		$payment_gateway_id = 'cardlink_payment_gateway_woocommerce';
+		$payment_gateways   = WC_Payment_Gateways::instance();
+		$payment_gateway    = $payment_gateways->payment_gateways()[$payment_gateway_id];
+		if ($payment_gateway->acquirer == '1') {
+			$classes .= ' acquirer-nexi-checkout';
+		}
+
+		return $classes;
 	}
 }
 

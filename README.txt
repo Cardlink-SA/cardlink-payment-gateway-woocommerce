@@ -2,8 +2,8 @@
 Contributors: cardlink
 Tags: payments, payment-gateway
 Requires at least: 5.8.3
-Tested up to: 6.5.2
-Stable tag: 6.5.2
+Tested up to: 6.5.5
+Stable tag: 6.5.5
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -48,3 +48,19 @@ Here are the detailed instructions to manually install a WordPress plugin by tra
 
 == Changelog ==
 
+= 1.0.7 =
+* Added support for block-based checkout.
+= 1.0.6 =
+* Support Alpha bonus transactions.
+= 1.0.5 =
+* Bugfix: Fix compatibility issues with Payment Plugins for Stripe WooCommerce and Payment Plugins for PayPal WooCommerce plugins
+= 1.0.4 =
+* Bugfix: Check if WooCommerce is installed and activated before initialize plugin functionality
+= 1.0.3 =
+* Styling updates on iframe popup window
+= 1.0.2 =
+* Bugfix: Installments total number
+= 1.0.1 =
+* Compatibility updates
+= 1.0.0 =
+* Initial release

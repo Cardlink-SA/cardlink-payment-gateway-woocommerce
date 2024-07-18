@@ -159,6 +159,8 @@ class Cardlink_Payment_Gateway {
 		$this->loader->add_action( 'plugins_loaded', $plugin_admin, 'load_payment_gateway' );
 		$this->loader->add_action( 'wp', $plugin_admin, 'cardlink_message' );
 		$this->loader->add_action( 'woocommerce_payment_gateways', $plugin_admin, 'woocommerce_add_cardlink_gateway' );
+		$this->loader->add_action( 'woocommerce_blocks_loaded', $plugin_admin, 'woocommerce_gateway_block_support' );
+
 	}
 
 	/**
@@ -175,6 +177,7 @@ class Cardlink_Payment_Gateway {
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
 		$this->loader->add_action( 'plugins_loaded', $plugin_public, 'delete_payment_token' );
+		$this->loader->add_action( 'rest_api_init', $plugin_public, 'register_rest_routes' );
 
 	}
 

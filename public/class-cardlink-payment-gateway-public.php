@@ -115,18 +115,6 @@ class Cardlink_Payment_Gateway_Public {
 
 		$ajax_url_params = array();
 
-		// You can remove this block if you don't use WPML
-/* 		if ( function_exists( 'icl_object_id' ) ) {
-			global $sitepress;
-
-			$current_lang = $sitepress->get_current_language();
-			wp_localize_script( 'main', 'i18n', array(
-				'lang' => $current_lang
-			) );
-
-			$ajax_url_params['lang'] = $current_lang;
-		} */
-
 		wp_localize_script($this->plugin_name, 'urls', array(
 			'home'   => home_url(),
 			'theme'  => get_template_directory(),
@@ -135,6 +123,64 @@ class Cardlink_Payment_Gateway_Public {
 			'ajax'   => add_query_arg( $ajax_url_params, admin_url( 'admin-ajax.php' ) )
 		) ); 
 
+	}
+
+	public function register_rest_routes() {
+		register_rest_route(
+			'wc-cardlink/v1',
+			'tokenizer',
+			array(
+				'methods'             => 'POST',
+				'callback'            => [ $this, 'handle_tokenized_transactions' ],
+				'permission_callback' => '__return_true',
+			)
+		);
+	}
+
+	public function handle_tokenized_transactions(WP_REST_Request $request) {
+
+		$post_data = $request->get_params();
+		$response_message = __( 'Payment method successfully added.', 'woocommerce' );
+		$redirect_url = wc_get_endpoint_url( 'payment-methods', '', wc_get_page_permalink( 'myaccount' ) );
+		error_log(json_encode($post_data));
+
+		$payment_gateway_instance	= WC()->payment_gateways->payment_gateways()['cardlink_payment_gateway_woocommerce'];
+		$shared_secret_key = $payment_gateway_instance->shared_secret_key;
+		$method_id = $payment_gateway_instance->id;
+
+		$digest = $post_data['digest'];
+		unset($post_data['result']);
+		unset($post_data['digest']);
+
+		$form_data = '';
+		foreach ($post_data as $k => $v) {
+			$form_data .= filter_var( $v, FILTER_SANITIZE_STRING );
+		}
+		$form_data      .= $shared_secret_key;
+		$computed_digest = Cardlink_Payment_Gateway_Woocommerce_Helper::calculate_digest( $form_data );
+
+		if ( $digest !== $computed_digest ){
+			wp_redirect($redirect_url);
+			exit();
+		}
+
+		$order_id = explode("at", $post_data['orderid'], 2);
+		$current_user_id = $order_id[0];
+		$extTokenExpYear  = substr( $post_data['extTokenExp'], 0, 4 );
+		$extTokenExpMonth = substr( $post_data['extTokenExp'], 4, 2 );
+
+		$token = new WC_Payment_Token_CC();
+		$token->set_token( $post_data['extToken'] );
+		$token->set_gateway_id( $method_id );
+		$token->set_last4( $post_data['extTokenPanEnd'] );
+		$token->set_expiry_year( $extTokenExpYear );
+		$token->set_expiry_month( $extTokenExpMonth );
+		$token->set_card_type( $post_data['payMethod'] );
+		$token->set_user_id( $current_user_id );
+		$token->save();
+
+		wp_redirect($redirect_url);
+		exit();
 	}
 
 }

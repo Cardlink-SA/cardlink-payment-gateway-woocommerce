@@ -70,6 +70,7 @@
 	background: #fff!important;
 }
 
+form#add_payment_method ul.woocommerce-PaymentMethods li.payment_method_cardlink_payment_gateway_woocommerce label img,
 ul.wc_payment_methods li.wc_payment_method.payment_method_cardlink_payment_gateway_woocommerce label img {
 	max-width: 100%;
 	max-height: 35px!important;

@@ -99,3 +99,15 @@ $plugin_path = trailingslashit( WP_PLUGIN_DIR ) . 'woocommerce/woocommerce.php';
 if (in_array( $plugin_path, wp_get_active_and_valid_plugins() )) {
 	run_cardlink_payment_gateway();
 }
+
+function cardlink_payment_gateway_depedency_notice() {
+	if ( class_exists( 'WooCommerce' ) ) {
+        return;
+	}
+	?>
+    <div class="notice notice-error is-dismissible">
+        <p><?php _e( 'Cardlink Payment Gateway requires WooCommerce to be installed and active.', 'cardlink-payment-gateway' ); ?></p>
+    </div>
+	<?php
+}
+add_action( 'admin_notices', 'cardlink_payment_gateway_depedency_notice' );
