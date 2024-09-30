@@ -11,6 +11,8 @@
 
 ## Changelog
 
+- **1.0.8**
+    - Added support for IRIS payment.
 - **1.0.7**
     - Added support for block-based checkout.
 - **1.0.6**

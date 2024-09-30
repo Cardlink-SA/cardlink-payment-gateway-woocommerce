@@ -48,6 +48,8 @@ Here are the detailed instructions to manually install a WordPress plugin by tra
 
 == Changelog ==
 
+= 1.0.8 =
+* Added support for IRIS payments.
 = 1.0.7 =
 * Added support for block-based checkout.
 = 1.0.6 =
