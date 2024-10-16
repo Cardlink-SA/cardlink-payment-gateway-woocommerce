@@ -1112,7 +1112,7 @@ class Cardlink_Payment_Gateway_Woocommerce_Iris extends WC_Payment_Gateway {
 			'enabled'                => array(
 				'title'       => __( 'Enable/Disable', 'cardlink-payment-gateway' ),
 				'type'        => 'checkbox',
-				'label'       => __( 'Enable Cardlink Payment Gateway', 'cardlink-payment-gateway' ),
+				'label'       => __( 'Enable IRIS Payment Gateway', 'cardlink-payment-gateway' ),
 				'description' => __( 'Enable or disable the gateway.', 'cardlink-payment-gateway' ),
 				'desc_tip'    => true,
 				'default'     => 'yes'
@@ -1122,14 +1122,14 @@ class Cardlink_Payment_Gateway_Woocommerce_Iris extends WC_Payment_Gateway {
 				'type'        => 'text',
 				'description' => __( 'This controls the title which the user sees during checkout.', 'cardlink-payment-gateway' ),
 				'desc_tip'    => true,
-				'default'     => __( 'Credit card via Cardlink', 'cardlink-payment-gateway' )
+				'default'     => __( 'Credit card via IRIS', 'cardlink-payment-gateway' )
 			),
 			'description'            => array(
 				'title'       => __( 'Description', 'cardlink-payment-gateway' ),
 				'type'        => 'textarea',
 				'description' => __( 'This controls the description which the user sees during checkout.', 'cardlink-payment-gateway' ),
 				'desc_tip'    => true,
-				'default'     => __( 'Pay Via Cardlink: Accepts Visa, Mastercard, Maestro, American Express, Diners, Discover.', 'cardlink-payment-gateway' )
+				'default'     => ''
 			),
 			'iris_customer_code'=> array(
 				'title'       => __( 'IRIS customer code', 'cardlink-payment-gateway' ),

@@ -12,7 +12,7 @@
 ## Changelog
 
 - **1.0.8**
-    - Added support for IRIS payment.
+    - Added support for IRIS payments with Nexi Checkout acquirer.
 - **1.0.7**
     - Added support for block-based checkout.
 - **1.0.6**
@@ -49,7 +49,8 @@ Once you have completed the requested tests and any changes to your website, you
 6.	Redirection option: user should have a checkbox to enable pop up with i-frame without redirection.
 7.	A text field for providing the absolute or relative (to Cardlink Payment Gateway location on server) url of custom CSS stylesheet, to change css styles in payment page.
 8.	Translation ready for Greek & English languages.
-
+9.	IRIS payments for Nexi acquirer only. Uppon installation, an extra payment is created. This payment can only be activated if Nexi is selected in the Cardlink payment method.
+10.	Not supporting iframe. The IRIS payments does not support the iframe feature.
 
 ## Installation
 
@@ -71,6 +72,11 @@ Here are the detailed instructions to manually install a WordPress plugin by tra
    ![image001](https://developer.cardlink.gr/downloads/cardlink-payment-gateway-woocommerce-assets/image001.jpg)
 2. This is the front-end of Cardlink Payment Gateway plugin located in checkout page.
    ![image002](https://developer.cardlink.gr/downloads/cardlink-payment-gateway-woocommerce-assets/image002.jpg)
+3. The IRIS Payment method settings screen used to configure the gateway. Supported if the selected acquired is Nexi Checkout from Cardlink Payment Gateway settings screen.
+   ![image003](https://developer.cardlink.gr/downloads/cardlink-payment-gateway-woocommerce-assets/image003.jpg)
+   To use IRIS, start by selecting Nexi Checkout as the acquirer from the Cardlink
+   Payment Gateway options screen. Then, navigate to the IRIS gateway settings screen
+   and enter your IRIS customer code.
 
 ##  Support tickets
 
