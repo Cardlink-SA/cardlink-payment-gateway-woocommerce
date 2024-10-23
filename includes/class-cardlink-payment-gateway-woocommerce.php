@@ -126,7 +126,12 @@ class Cardlink_Payment_Gateway_Woocommerce_Helper {
 		$form_data_bonus = '';
 		foreach ( $post_data as $k => $v ) {
 			if ( ! in_array( $k, array( '_charset_', 'digest', 'submitButton', 'xlsbonusadjamt', 'xlsbonustxid', 'xlsbonusstatus', 'xlsbonusdetails', 'xlsbonusdigest' ) ) ) {
-				$form_data .= filter_var( $post_data[ $k ], FILTER_SANITIZE_STRING );
+				if ($k == 'message' && $post_data['payMethod'] == 'IRIS') {
+					$message = sanitize_text_field( $post_data[ $k ] );
+					$form_data .= stripslashes($message);
+					continue;
+				}
+                $form_data .= filter_var( $post_data[ $k ], FILTER_SANITIZE_STRING );
 			}
 			if ( in_array( $k, array( 'xlsbonusadjamt', 'xlsbonustxid', 'xlsbonusstatus', 'xlsbonusdetails' ) ) ) {
 				$form_data_bonus .= filter_var( $post_data[ $k ], FILTER_SANITIZE_STRING );
@@ -255,8 +260,6 @@ class Cardlink_Payment_Gateway_Woocommerce_Helper {
 		return $order;
 	}
 	static function process_payment($order_id, $post_data, $method_id) {
-		error_log('process_payment');
-		error_log(json_encode($post_data));
 		$order  = new WC_Order( $order_id );
 		$doseis = isset( $post_data[ esc_attr( $method_id ) . '-card-doseis' ] ) ? intval( $post_data[ esc_attr( $method_id ) . '-card-doseis' ] ) : '';
 		if ( $doseis > 0 ) {
