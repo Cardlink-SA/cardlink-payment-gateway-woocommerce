@@ -51,6 +51,8 @@ Here are the detailed instructions to manually install a WordPress plugin by tra
 
 == Changelog ==
 
+= 1.0.10 =
+* Display IRIS only for Nexi checkout acquirer.
 = 1.0.9 =
 * Compatibility updates & bug fixes
 = 1.0.8 =

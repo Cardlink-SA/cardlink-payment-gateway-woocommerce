@@ -52,7 +52,25 @@ class Cardlink_Payment_Gateway_Public {
 
 		$this->plugin_name = $plugin_name;
 		$this->version     = $version;
+		add_filter( 'woocommerce_available_payment_gateways', [ $this, 'maybe_show_iris_gateway'] );
 
+	}
+
+	/**
+	 * Conditionally display the IRIS payment gateway on checkout
+	 *
+	 * @since    1.0.0
+	 */
+	public function maybe_show_iris_gateway( $available_gateways ) {
+		if ( ! is_admin() ) {
+			$payment_gateway_id = 'cardlink_payment_gateway_woocommerce';
+			if (array_key_exists($payment_gateway_id, $available_gateways)) {
+				if ($available_gateways[$payment_gateway_id]->acquirer != 1) {
+					unset($available_gateways['cardlink_payment_gateway_woocommerce_iris']);
+				}
+			}
+		}
+		return $available_gateways;
 	}
 
 	/**

@@ -11,8 +11,10 @@
 
 ## Changelog
 
+- **1.0.10**
+  - Display IRIS only for Nexi checkout acquirer.
 - **1.0.9**
-    - Compatibility updates & bug fixes
+  - Compatibility updates & bug fixes
 - **1.0.8**
     - Added support for IRIS payments with Nexi Checkout acquirer.
 - **1.0.7**
