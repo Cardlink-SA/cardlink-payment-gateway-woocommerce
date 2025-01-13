@@ -3,7 +3,7 @@
 - Contributors: cardlink
 - Tags: payments, payment-gateway
 - Requires at least: 5.8.3
-- Tested up to: 6.6.2
+- Tested up to: 6.7.1
 - Requires PHP: 7.x - 8.x
 - License: GPLv2 or later
 - License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -11,6 +11,8 @@
 
 ## Changelog
 
+- **1.0.11**
+  - PHP compatibility updates & bug fixes.
 - **1.0.10**
   - Display IRIS only for Nexi checkout acquirer.
 - **1.0.9**

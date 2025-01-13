@@ -81,10 +81,10 @@ class Cardlink_Payment_Gateway_Woocommerce_Helper {
 			error_log( '---- End of eCommerce Response ----' );
 		}
 
-		$mid = filter_var( $post_data['mid'], FILTER_SANITIZE_NUMBER_INT );
+		$mid = self::sanitize_value( $post_data['mid'], 'integer' );
 
 		$orderid_session = WC()->session->get( 'order_id' );
-		$orderid_post    = filter_var( $post_data['orderid'], FILTER_SANITIZE_STRING );
+		$orderid_post    = self::sanitize_value( $post_data['orderid'] );
 
 		$reg = preg_match( '/^(.*?)at/', $orderid = $orderid_post, $matches );
 
@@ -102,22 +102,22 @@ class Cardlink_Payment_Gateway_Woocommerce_Helper {
 			error_log( $orderid_session );
 		}
 
-		$status         = filter_var( $post_data['status'], FILTER_SANITIZE_STRING );
-		$orderAmount    = filter_var( $post_data['orderAmount'], FILTER_SANITIZE_NUMBER_FLOAT );
-		$currency       = filter_var( $post_data['currency'], FILTER_SANITIZE_STRING );
-		$paymentTotal   = filter_var( $post_data['paymentTotal'], FILTER_SANITIZE_NUMBER_FLOAT );
-		$message        = isset( $post_data['message'] ) ? filter_var( $post_data['message'], FILTER_SANITIZE_STRING ) : '';
-		$riskScore      = isset( $post_data['riskScore'] ) ? filter_var( $post_data['riskScore'], FILTER_SANITIZE_NUMBER_FLOAT ) : '';
-		$payMethod      = isset( $post_data['payMethod'] ) ? filter_var( $post_data['payMethod'], FILTER_SANITIZE_STRING ) : '';
-		$txId           = isset( $post_data['txId'] ) ? filter_var( $post_data['txId'], FILTER_SANITIZE_NUMBER_FLOAT ) : '';
-		$paymentRef     = isset( $post_data['paymentRef'] ) ? filter_var( $post_data['paymentRef'], FILTER_SANITIZE_STRING ) : '';
-		$extToken       = isset( $post_data['extToken'] ) ? filter_var( $post_data['extToken'], FILTER_SANITIZE_STRING ) : '';
-		$extTokenPanEnd = isset( $post_data['extTokenPanEnd'] ) ? filter_var( $post_data['extTokenPanEnd'], FILTER_SANITIZE_STRING ) : '';
+		$status         = self::sanitize_value( $post_data['status'] );
+		$orderAmount    = self::sanitize_value( $post_data['orderAmount'], 'float' );
+		$currency       = self::sanitize_value( $post_data['currency'] );
+		$paymentTotal   = self::sanitize_value( $post_data['paymentTotal'], 'float' );
+		$message        = isset( $post_data['message'] ) ? self::sanitize_value( $post_data['message'] ) : '';
+		$riskScore      = isset( $post_data['riskScore'] ) ? self::sanitize_value( $post_data['riskScore'], 'float' ) : '';
+		$payMethod      = isset( $post_data['payMethod'] ) ? self::sanitize_value( $post_data['payMethod'] ) : '';
+		$txId           = isset( $post_data['txId'] ) ? self::sanitize_value( $post_data['txId'], 'float' ) : '';
+		$paymentRef     = isset( $post_data['paymentRef'] ) ? self::sanitize_value( $post_data['paymentRef'] ) : '';
+		$extToken       = isset( $post_data['extToken'] ) ? self::sanitize_value( $post_data['extToken'] ) : '';
+		$extTokenPanEnd = isset( $post_data['extTokenPanEnd'] ) ? self::sanitize_value( $post_data['extTokenPanEnd'] ) : '';
 		$extTokenExp    = isset( $post_data['extTokenExp'] ) ? $post_data['extTokenExp'] : '';
-		$digest         = filter_var( $post_data['digest'], FILTER_SANITIZE_STRING );
+		$digest         = self::sanitize_value( $post_data['digest'] );
 		$xlsbonusdigest = '';
 		if( array_key_exists( 'xlsbonusdigest', $post_data ) ){
-			$xlsbonusdigest     = filter_var( $post_data['xlsbonusdigest'], FILTER_SANITIZE_STRING );
+			$xlsbonusdigest     = self::sanitize_value( $post_data['xlsbonusdigest'] );
 		}
 		$extTokenExpYear  = substr( $extTokenExp, 0, 4 );
 		$extTokenExpMonth = substr( $extTokenExp, 4, 2 );
@@ -131,10 +131,10 @@ class Cardlink_Payment_Gateway_Woocommerce_Helper {
 					$form_data .= stripslashes($message);
 					continue;
 				}
-                $form_data .= filter_var( $post_data[ $k ], FILTER_SANITIZE_STRING );
+                $form_data .= self::sanitize_value( $post_data[ $k ] );
 			}
 			if ( in_array( $k, array( 'xlsbonusadjamt', 'xlsbonustxid', 'xlsbonusstatus', 'xlsbonusdetails' ) ) ) {
-				$form_data_bonus .= filter_var( $post_data[ $k ], FILTER_SANITIZE_STRING );
+				$form_data_bonus .= self::sanitize_value( $post_data[ $k ] );
 			}
 		}		
 
@@ -297,6 +297,17 @@ class Cardlink_Payment_Gateway_Woocommerce_Helper {
 			);
 		}
 	}
+
+    public static function sanitize_value($text, $type = 'string') {
+        switch ($type) {
+            case 'float':
+	            return floatval( $text );
+            case 'integer':
+	            return intval( $text );
+            default:
+	            return sanitize_text_field( $text );
+        }
+    }
 
 }
 
@@ -587,7 +598,7 @@ class Cardlink_Payment_Gateway_Woocommerce extends WC_Payment_Gateway {
 
 	function get_installments_html($amount) {
 		if (is_account_page()) {
-			return;
+			return '';
 		}
 		ob_start();
 
@@ -910,7 +921,7 @@ class Cardlink_Payment_Gateway_Woocommerce extends WC_Payment_Gateway {
 		} else {
 			$html .= '<div class="' . $this->id . '_modal">';
 			$html .= '<div class="' . $this->id . '_modal_wrapper">';
-			$html .= '<iframe name="payment_iframe" id="payment_iframe" src="" frameBorder="0" data-order-id="' . $order_id . '"></iframe>';
+			$html .= '<iframe name="payment_iframe" id="payment_iframe" src="" data-order-id="' . $order_id . '"></iframe>';
 			$html .= '</div>';
 			$html .= '</div>';
 		}
