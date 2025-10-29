@@ -24,15 +24,3 @@
 .installments_variation_row .button i {
 	vertical-align: middle;
 }
-
-body:not(.acquirer-nexi-checkout) td.wc_payment_gateways_wrapper tr[data-gateway_id="cardlink_payment_gateway_woocommerce_iris"]{
-	display: none;
-}
-
-.iris-notice-message {
-	background: #f0ebb9;
-	margin: 10px 0;
-	display: inline-block;
-	padding: 15px;
-	border: 1px solid #c1bb7a;
-}

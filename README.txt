@@ -2,7 +2,7 @@
 Contributors: cardlink
 Tags: payments, payment-gateway
 Requires at least: 5.8.3
-Tested up to: 6.7.1
+Tested up to: 6.8.2
 Stable tag: 6.5.5
 Requires PHP: 7.4
 License: GPLv2 or later
@@ -51,6 +51,8 @@ Here are the detailed instructions to manually install a WordPress plugin by tra
 
 == Changelog ==
 
+= 1.0.12 =
+* Enabled IRIS for Worldline and Cardlink.
 = 1.0.11 =
 * PHP compatibility updates & bug fixes.
 = 1.0.10 =

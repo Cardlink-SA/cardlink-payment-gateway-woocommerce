@@ -53,8 +53,6 @@ class Cardlink_Payment_Gateway_Admin {
 		$this->plugin_name = $plugin_name;
 		$this->version     = $version;
 
-		add_filter( 'admin_body_class', [ $this, 'admin_body_class'] );
-
 	}
 
 	/**
@@ -164,16 +162,5 @@ class Cardlink_Payment_Gateway_Admin {
 		}
 	}
 
-	public function admin_body_class($classes) {
-
-		$payment_gateway_id = 'cardlink_payment_gateway_woocommerce';
-		$payment_gateways   = WC_Payment_Gateways::instance();
-		$payment_gateway    = $payment_gateways->payment_gateways()[$payment_gateway_id];
-		if ($payment_gateway->acquirer == '1') {
-			$classes .= ' acquirer-nexi-checkout';
-		}
-
-		return $classes;
-	}
 }
 

@@ -1111,11 +1111,6 @@ class Cardlink_Payment_Gateway_Woocommerce_Iris extends WC_Payment_Gateway {
 		wc_back_link( __( 'Return to payments', 'woocommerce' ), admin_url( 'admin.php?page=wc-settings&tab=checkout' ) );
 		echo '</h2>';
 		echo '<p>' . __( 'Cardlink Payment Gateway allows you to accept payment through IRIS on your Woocommerce Powered Site.', 'cardlink-payment-gateway' ) . '</p>';
-		?>
-		<p class="iris-notice-message">
-			<?php _e('The IRIS payment method is supported only if the selected acquirer is Nexi Checkout.', 'cardlink-payment-gateway'); ?>
-		</p>
-		<?php
 		echo '<table class="form-table">';
 		$this->generate_settings_html();
 		echo '</table>';
@@ -1201,13 +1196,17 @@ class Cardlink_Payment_Gateway_Woocommerce_Iris extends WC_Payment_Gateway {
 		$_SESSION['order_id'] = $order_id;
 		WC()->session->set( 'order_id', $order_id );
 
+		$orderDesc = '';
+		if ($this->acquirer == 1) {
+			$orderDesc = $this->get_rf_code( $order_id );
+		}
 		if ( $country != 'GR' ) {
 			$form_data_array = array(
 				'version'     => $version,
 				'mid'         => $this->merchant_id,
 				'lang'        => $lang,
 				'orderid'     => $order_id . 'at' . date( 'Ymdhisu' ),
-				'orderDesc'   => $this->get_rf_code( $order_id ),
+				'orderDesc'   => $orderDesc,
 				'orderAmount' => $order->get_total(),
 				'currency'    => $currency,
 				'payerEmail'  => $order->get_billing_email(),
@@ -1227,7 +1226,7 @@ class Cardlink_Payment_Gateway_Woocommerce_Iris extends WC_Payment_Gateway {
 				'mid'         => $this->merchant_id,
 				'lang'        => $lang,
 				'orderid'     => $order_id . 'at' . date( 'Ymdhisu' ),
-				'orderDesc'   => $this->get_rf_code( $order_id ),
+				'orderDesc'   => $orderDesc,
 				'orderAmount' => $order->get_total(),
 				'currency'    => $currency,
 				'payerEmail'  => $order->get_billing_email(),
