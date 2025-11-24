@@ -1075,7 +1075,6 @@ class Cardlink_Payment_Gateway_Woocommerce_Iris extends WC_Payment_Gateway {
 	public $merchant_id;
 	public $acquirer;
 	public $shared_secret_key;
-	public $iris_customer_code;
 	public $popup;
 	public $enable_log;
 	public $api_request_url = 'Cardlink_Payment_Gateway_Woocommerce_Iris';
@@ -1096,7 +1095,6 @@ class Cardlink_Payment_Gateway_Woocommerce_Iris extends WC_Payment_Gateway {
 		// Define User set Variables
 		$this->title                  = sanitize_text_field( $this->get_option( 'title' ) );
 		$this->description            = sanitize_text_field( $this->get_option( 'description' ) );
-		$this->iris_customer_code     = sanitize_text_field( $this->get_option( 'iris_customer_code' ) );
 
 		add_action( 'woocommerce_receipt_' . $this->id, array( $this, 'receipt_page_iris' ) );
 		add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array(
@@ -1139,13 +1137,6 @@ class Cardlink_Payment_Gateway_Woocommerce_Iris extends WC_Payment_Gateway {
 				'description' => __( 'This controls the description which the user sees during checkout.', 'cardlink-payment-gateway' ),
 				'desc_tip'    => true,
 				'default'     => ''
-			),
-			'iris_customer_code'=> array(
-				'title'       => __( 'IRIS customer code', 'cardlink-payment-gateway' ),
-				'type'        => 'text',
-				'description' => __( 'Enter Your IRIS customer code', 'cardlink-payment-gateway' ),
-				'default'     => '',
-				'desc_tip'    => true
 			)
 		);
 	}
@@ -1197,9 +1188,6 @@ class Cardlink_Payment_Gateway_Woocommerce_Iris extends WC_Payment_Gateway {
 		WC()->session->set( 'order_id', $order_id );
 
 		$orderDesc = '';
-		if ($this->acquirer == 1) {
-			$orderDesc = $this->get_rf_code( $order_id );
-		}
 		if ( $country != 'GR' ) {
 			$form_data_array = array(
 				'version'     => $version,
@@ -1303,44 +1291,6 @@ class Cardlink_Payment_Gateway_Woocommerce_Iris extends WC_Payment_Gateway {
 		$option_value = parent::get_option( $key, $empty_value );
 
 		return $option_value;
-	}
-
-	public function get_rf_code( $order_id ) {
-		$rf_payment_code = get_post_meta( $order_id, 'rf_payment_code', true );
-		if ( $rf_payment_code !== '' ) {
-			return $rf_payment_code;
-		}
-
-		$order = new WC_Order( $order_id );
-		$order_total = $order->get_total();
-		/* calculate payment check code */
-		$paymentSum = 0;
-		if ( $order_total > 0 ) {
-			$ordertotal = str_replace( [ ',' ], '.', (string) $order_total );
-			$ordertotal = number_format( $ordertotal, 2, '', '' );
-			$ordertotal = strrev( $ordertotal );
-			$factor     = [ 1, 7, 3 ];
-			$idx        = 0;
-			for ( $i = 0; $i < strlen( $ordertotal ); $i ++ ) {
-				$idx        = $idx <= 2 ? $idx : 0;
-				$paymentSum += $ordertotal[ $i ] * $factor[ $idx ];
-				$idx ++;
-			}
-		}
-		$randomNumber 	 = $this->generateRandomString( 13, $order_id );
-		$paymentCode  	 = $paymentSum ? ( $paymentSum % 8 ) : '8';
-		$systemCode   	 = '12';
-		$tempCode     	 = $this->iris_customer_code . $paymentCode . $systemCode . $randomNumber . '271500';
-		$mod97        	 = bcmod( $tempCode, '97' );
-		$cd           	 = 98 - (int) $mod97;
-		$cd              = str_pad( (string) $cd, 2, '0', STR_PAD_LEFT );
-		$rf_payment_code = 'RF' . $cd . $this->iris_customer_code . $paymentCode . $systemCode . $randomNumber;
-		update_post_meta( $order_id, 'rf_payment_code', $rf_payment_code );
-		return $rf_payment_code;
-	}
-
-	public function generateRandomString( $length = 22, $order_id = 0 ) {
-		return str_pad( $order_id, $length, '0', STR_PAD_LEFT );
 	}
 
 	function process_payment( $order_id ) {
