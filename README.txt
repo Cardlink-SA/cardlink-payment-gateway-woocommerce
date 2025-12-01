@@ -27,7 +27,7 @@ Once you have completed the requested tests and any changes to your website, you
 6.	Redirection option: user should have a checkbox to enable pop up with i-frame without redirection.
 7.	A text field for providing the absolute or relative (to Cardlink Payment Gateway location on server) url of custom CSS stylesheet, to change css styles in payment page.
 8.	Translation ready for Greek & English languages.
-9.	IRIS payments for Nexi acquirer only. Uppon installation, an extra payment is created. This payment can only be activated if Nexi is selected in the Cardlink payment method.
+9.	IRIS payments. Upon installation, an extra payment is created.
 10.	Not supporting iframe. The IRIS payments does not support the iframe feature.
 
 == Installation ==
@@ -47,7 +47,7 @@ Here are the detailed instructions to manually install a WordPress plugin by tra
 
 1. The Cardlink Payment Gateway settings screen used to configure the main Cardlink gateway.
 2. This is the front-end of Cardlink Payment Gateway plugin located in checkout page.
-3. The IRIS Payment method settings screen used to configure the gateway. Supported if the selected acquired is Nexi Checkout from Cardlink Payment Gateway settings screen.
+3. The IRIS Payment method settings screen used to configure the gateway.
 
 == Changelog ==
 
