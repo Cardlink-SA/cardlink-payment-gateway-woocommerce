@@ -52,7 +52,7 @@ Here are the detailed instructions to manually install a WordPress plugin by tra
 == Changelog ==
 
 = 1.0.13 =
-* Remove deprecated field for IRIS customer code.
+* Remove deprecated field for IRIS customer code (If you already use IRIS with your own seller id, DO NOT install the new version!).
 = 1.0.12 =
 * Enabled IRIS for Worldline and Cardlink.
 = 1.0.11 =
