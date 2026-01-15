@@ -3,8 +3,8 @@ Contributors: cardlink
 Tags: payments, payment-gateway
 Requires at least: 5.8.3
 Tested up to: 6.8.2
-Stable tag: 6.5.5
-Requires PHP: 7.4
+Stable tag: 6.8.2
+Requires PHP: 7.x - 8.x
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -51,6 +51,8 @@ Here are the detailed instructions to manually install a WordPress plugin by tra
 
 == Changelog ==
 
+= 1.0.14 =
+* Woocommerce Compatibility updates.
 = 1.0.13 =
 * Remove deprecated field for IRIS customer code (If you already use IRIS with your own seller id, DO NOT install the new version!).
 = 1.0.12 =

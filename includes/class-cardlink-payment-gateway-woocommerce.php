@@ -1187,14 +1187,13 @@ class Cardlink_Payment_Gateway_Woocommerce_Iris extends WC_Payment_Gateway {
 		$_SESSION['order_id'] = $order_id;
 		WC()->session->set( 'order_id', $order_id );
 
-		$orderDesc = '';
 		if ( $country != 'GR' ) {
 			$form_data_array = array(
 				'version'     => $version,
 				'mid'         => $this->merchant_id,
 				'lang'        => $lang,
 				'orderid'     => $order_id . 'at' . date( 'Ymdhisu' ),
-				'orderDesc'   => $orderDesc,
+				'orderDesc'   => 'Order #' . $order_id,
 				'orderAmount' => $order->get_total(),
 				'currency'    => $currency,
 				'payerEmail'  => $order->get_billing_email(),
@@ -1214,7 +1213,7 @@ class Cardlink_Payment_Gateway_Woocommerce_Iris extends WC_Payment_Gateway {
 				'mid'         => $this->merchant_id,
 				'lang'        => $lang,
 				'orderid'     => $order_id . 'at' . date( 'Ymdhisu' ),
-				'orderDesc'   => $orderDesc,
+				'orderDesc'   => 'Order #' . $order_id,
 				'orderAmount' => $order->get_total(),
 				'currency'    => $currency,
 				'payerEmail'  => $order->get_billing_email(),

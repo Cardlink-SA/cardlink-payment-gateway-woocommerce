@@ -19,7 +19,7 @@
  * Plugin Name:       Cardlink Payment Gateway
  * Plugin URI:        https://www.cardlink.gr/
  * Description:       Cardlink Payment Gateway allows you to accept payment through various schemes such as Visa, Mastercard, Maestro, American Express, Diners, Discover cards on your website.
- * Version:           1.0.13
+ * Version:           1.0.14
  * Requires at least: 6.0
  * Author:            Cardlink
  * Author URI:        https://www.cardlink.gr/
@@ -27,6 +27,9 @@
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
  * Text Domain:       cardlink-payment-gateway
  * Domain Path:       /languages
+ * Requires Plugins: woocommerce
+ * WC requires at least: 3.0.0
+ * WC tested up to: 10.4.2
  */
 
 // If this file is called directly, abort.
@@ -39,7 +42,7 @@ if ( ! defined( 'WPINC' ) ) {
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-define( 'CARDLINK_PAYMENT_GATEWAY_VERSION', '1.0.13' );
+define( 'CARDLINK_PAYMENT_GATEWAY_VERSION', '1.0.14' );
 
 /**
  * The code that runs during plugin activation.
@@ -111,3 +114,10 @@ function cardlink_payment_gateway_depedency_notice() {
 	<?php
 }
 add_action( 'admin_notices', 'cardlink_payment_gateway_depedency_notice' );
+
+function woocommerce_gateway_block_utilities() {
+    if ( class_exists( \Automattic\WooCommerce\Utilities\FeaturesUtil::class ) ) {
+        \Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', __FILE__, true );
+    }
+}
+add_action( 'before_woocommerce_init', 'woocommerce_gateway_block_utilities' );

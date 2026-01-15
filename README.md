@@ -11,6 +11,8 @@
 
 ## Changelog
 
+- **1.0.14**
+  - Woocommerce Compatibility updates. 
 - **1.0.13**
   - Remove deprecated field for IRIS customer code (If you already use IRIS with your own seller id, DO NOT install the new version!).
 - **1.0.12**

@@ -148,19 +148,19 @@ class Cardlink_Payment_Gateway_Admin {
 		return $methods;
 	}
 
-	public static function woocommerce_gateway_block_support() {
-		if ( class_exists( 'Automattic\WooCommerce\Blocks\Payments\Integrations\AbstractPaymentMethodType' ) ) {
-			require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/blocks/class-wc-cardlink-payments-block.php';
-			require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/blocks/class-wc-cardlink-payments-iris-block.php';
-			add_action(
-				'woocommerce_blocks_payment_method_type_registration',
-				function( Automattic\WooCommerce\Blocks\Payments\PaymentMethodRegistry $payment_method_registry ) {
-					$payment_method_registry->register( new WC_Gateway_Cardlink_Blocks_Support() );
-					$payment_method_registry->register( new WC_Gateway_Cardlink_Iris_Blocks_Support() );
-				}
-			);
-		}
-	}
+    public static function woocommerce_gateway_block_support() {
+        if ( class_exists( 'Automattic\WooCommerce\Blocks\Payments\Integrations\AbstractPaymentMethodType' ) ) {
+            require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/blocks/class-wc-cardlink-payments-block.php';
+            require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/blocks/class-wc-cardlink-payments-iris-block.php';
+            add_action(
+                'woocommerce_blocks_payment_method_type_registration',
+                function( Automattic\WooCommerce\Blocks\Payments\PaymentMethodRegistry $payment_method_registry ) {
+                    $payment_method_registry->register( new WC_Gateway_Cardlink_Blocks_Support() );
+                    $payment_method_registry->register( new WC_Gateway_Cardlink_Iris_Blocks_Support() );
+                }
+            );
+        }
+    }
 
 }
 
