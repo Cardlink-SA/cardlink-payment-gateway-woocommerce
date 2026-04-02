@@ -93,3 +93,4 @@ Here are the detailed instructions to manually install a WordPress plugin by tra
 ##  Support tickets
 
 In case that you face any technical issue during the installation process, you can contact the Cardlink e-commerce team at ecommerce_support@cardlink.gr .
+
