@@ -1,0 +1,21 @@
+{
+    "name": "flavor/cardlink-payment-gateway",
+    "description": "Cardlink Payment Gateway for WooCommerce - Accepts Visa, Mastercard, Maestro, AMEX, Diners, Discover and IRIS payments.",
+    "type": "wordpress-plugin",
+    "license": "GPL-2.0-or-later",
+    "require": {
+        "php": ">=7.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "Flavor\\CardlinkPaymentGateway\\": "src/"
+        },
+        "classmap": [
+            "lib/CardlinkXmlApi.php"
+        ]
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "sort-packages": true
+    }
+}

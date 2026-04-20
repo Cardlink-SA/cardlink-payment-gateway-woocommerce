@@ -2,19 +2,25 @@
 
 - Contributors: cardlink
 - Tags: payments, payment-gateway
-- Requires at least: 5.8.3
+- Requires at least: 6.0
 - Tested up to: 6.8.2
-- Requires PHP: 7.x - 8.x
+- Requires PHP: 7.4+
+- WC requires at least: 7.0.0
+- WC tested up to: 9.6
 - License: GPLv2 or later
 - License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 
 ## Changelog
 
+- **1.1.0**
+  - Added support for Cardlink's Background confirmation service.
+  - Added support for XML API operations (Capture, Refund, Void, Status) within order page.
+  - Plugin refactor: modernised, namespaced codebase with cleaner separation between gateway, admin, and checkout layers.
 - **1.0.14**
-  - Woocommerce Compatibility updates. 
+  - Woocommerce Compatibility updates. (If you already use IRIS with your own seller id, DO NOT install the new version!)
 - **1.0.13**
-  - Remove deprecated field for IRIS customer code (If you already use IRIS with your own seller id, DO NOT install the new version!).
+  - Remove deprecated field for IRIS customer code. (If you already use IRIS with your own seller id, DO NOT install the new version!)
 - **1.0.12**
   - Enabled IRIS for Worldline and Cardlink.
 - **1.0.11**
@@ -92,5 +98,4 @@ Here are the detailed instructions to manually install a WordPress plugin by tra
 
 ##  Support tickets
 
-In case that you face any technical issue during the installation process, you can contact the Cardlink e-commerce team at ecommerce_support@cardlink.gr .
-
+In case that you face any technical issue during the installation process, you can contact the Cardlink e-commerce team at ecommerce_support@cardlink.gr.

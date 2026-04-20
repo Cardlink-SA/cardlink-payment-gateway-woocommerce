@@ -1,0 +1,25 @@
+{
+    "name": "cardlink-payment-gateway",
+    "version": "1.1.0",
+    "private": true,
+    "license": "GPL-2.0-or-later",
+    "engines": {
+        "node": ">=16.13.0",
+        "npm": ">=8.1.0"
+    },
+    "devDependencies": {
+        "@woocommerce/dependency-extraction-webpack-plugin": "2.2.0",
+        "@wordpress/scripts": "^31.1.0",
+        "archiver": "^7.0.1",
+        "cross-env": "7.0.3",
+        "wp-pot": "^1.10.2"
+    },
+    "scripts": {
+        "build": "wp-scripts build --webpack-src-dir=assets/js/blocks --output-path=assets/js/blocks/build",
+        "start": "wp-scripts start --webpack-src-dir=assets/js/blocks --output-path=assets/js/blocks/build",
+        "build:pot": "node ./tasks/build-pot.js",
+        "build:zip": "node ./tasks/build-zip.js",
+        "packages-update": "wp-scripts packages-update",
+        "check-engines": "wp-scripts check-engines"
+    }
+}

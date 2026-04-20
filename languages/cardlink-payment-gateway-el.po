@@ -1,8 +1,10 @@
+# Copyright (C) 2026 Cardlink Payment Gateway
+# This file is distributed under the same license as the Cardlink Payment Gateway package.
 msgid ""
 msgstr ""
-"Project-Id-Version: Cardlink_Payment_Gateway\n"
-"POT-Creation-Date: 2022-08-08 13:55+0300\n"
-"PO-Revision-Date: 2022-08-08 13:57+0300\n"
+"Project-Id-Version: Cardlink Payment Gateway\n"
+"POT-Creation-Date: 2026-03-09 19:11+0200\n"
+"PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: el\n"
@@ -10,102 +12,385 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 2.2.3\n"
 "X-Poedit-Basepath: ..\n"
+"X-Poedit-KeywordsList: "
+"__;_e;_ex:1,2c;_n:1,2;_n_noop:1,2;_nx:1,2,4c;_nx_noop:1,2,3c;_x:1,2c;esc_attr__;esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c\n"
 "X-Poedit-SourceCharset: UTF-8\n"
-"X-Poedit-KeywordsList: __;_e\n"
+"X-Generator: Poedit 3.8\n"
 "X-Poedit-SearchPath-0: .\n"
-"X-Poedit-SearchPath-1: includes/class-cardlink-payment-gateway-woocommerce."
-"php\n"
+"X-Poedit-SearchPathExcluded-0: *.js\n"
 
-#: admin/class-cardlink-payment-gateway-admin.php:103
+#: cardlink-payment-gateway.php:43
+msgid "Settings"
+msgstr "Ρυθμίσεις"
+
+#: cardlink-payment-gateway.php:52
+msgid ""
+"Cardlink Payment Gateway requires WooCommerce to be installed and active."
+msgstr ""
+"Το Cardlink Payment Gateway απαιτεί την εγκατάσταση και ενεργοποίηση του "
+"WooCommerce."
+
+#: src/Admin/AdminAssets.php:41
 msgid "Number of installments"
 msgstr "Αριθμός δόσεων"
 
-#: admin/class-cardlink-payment-gateway-admin.php:104
+#: src/Admin/AdminAssets.php:42
 msgid "Total order amount"
 msgstr "Συνολικό ποσό παραγγελίας"
 
-#: admin/class-cardlink-payment-gateway-admin.php:105
+#: src/Admin/AdminAssets.php:43
 msgid "Add variation"
 msgstr "Προσθήκη παραλλαγής"
 
-#: includes/class-cardlink-payment-gateway-ajax.php:95
-msgid "No results"
-msgstr "Δε βρέθηκαν αποτελέσματα"
-
-#: includes/class-cardlink-payment-gateway-woocommerce.php:41
-msgid "Cardlink Payment Gateway"
-msgstr "Cardlink Payment Gateway"
-
-#: includes/class-cardlink-payment-gateway-woocommerce.php:42
+#: src/Admin/AdminAssets.php:57
 msgid ""
-"Cardlink Payment Gateway allows you to accept payment through various "
-"schemes such as Visa, Mastercard, Maestro, American Express, Diners, "
-"Discover cards on your Woocommerce Powered Site."
+"Merchant ID is required when not inheriting from Cardlink Payment Gateway."
 msgstr ""
-"Με το Cardlink Payment Gateway μπορείτε να δέχεστε πληρωμές στο Woocommerce "
-"e-shop σας μέσω διαφορετικών σχημάτων, όπως Visa, Mastercard, Maestro, "
-"American Express, Diners και Discover."
+"Το Merchant ID είναι υποχρεωτικό όταν δεν κληρονομείτε ρυθμίσεις από το "
+"Cardlink Payment Gateway."
 
-#: includes/class-cardlink-payment-gateway-woocommerce.php:95
-msgid "Return to payments"
-msgstr "Επιστροφή στη σελίδα πληρωμής"
-
-#: includes/class-cardlink-payment-gateway-woocommerce.php:97
+#: src/Admin/AdminAssets.php:58
 msgid ""
-"Cardlink Payment Gateway allows you to accept payment through credit cards."
-msgstr "Επιστροφή στη σελίδα πληρωμής."
+"Shared Secret Key is required when not inheriting from Cardlink Payment "
+"Gateway."
+msgstr ""
+"Το Shared Secret Key είναι υποχρεωτικό όταν δεν κληρονομείτε ρυθμίσεις από "
+"το Cardlink Payment Gateway."
 
-#: includes/class-cardlink-payment-gateway-woocommerce.php:116
+#: src/Admin/OrderActions.php:54
+msgid "Cardlink: Capture payment"
+msgstr "Cardlink: Είσπραξη πληρωμής"
+
+#: src/Admin/OrderActions.php:56 src/Admin/OrderActions.php:63
+msgid "Cardlink: Void payment"
+msgstr "Cardlink: Ακύρωση πληρωμής"
+
+#: src/Admin/OrderActions.php:77
+msgid "Cardlink capture failed: Gateway not available or XML API disabled."
+msgstr ""
+"Η είσπραξη Cardlink απέτυχε: Η πύλη πληρωμής δεν είναι διαθέσιμη ή το XML "
+"API είναι απενεργοποιημένο."
+
+#: src/Admin/OrderActions.php:83
+msgid "Cardlink capture failed: Cardlink order ID not found."
+msgstr ""
+"Η είσπραξη Cardlink απέτυχε: Δεν βρέθηκε αναγνωριστικό παραγγελίας Cardlink."
+
+#: src/Admin/OrderActions.php:104 src/Admin/OrderMetaBox.php:178
+#, php-format
+msgid "Cardlink capture successful: %1$s %2$s"
+msgstr "Επιτυχής είσπραξη Cardlink: %1$s %2$s"
+
+#: src/Admin/OrderActions.php:108 src/Admin/OrderActions.php:154
+#: src/Gateway/AbstractCardlinkGateway.php:261
+msgid "Unknown error"
+msgstr "Άγνωστο σφάλμα"
+
+#: src/Admin/OrderActions.php:109 src/Admin/OrderMetaBox.php:184
+#, php-format
+msgid "Cardlink capture failed: %s"
+msgstr "Η είσπραξη Cardlink απέτυχε: %s"
+
+#: src/Admin/OrderActions.php:120
+msgid ""
+"Cardlink void failed: Void (XML Cancel) is only available on the same day as "
+"the transaction. Use the WooCommerce refund button to issue an XML Refund."
+msgstr ""
+"Η ακύρωση Cardlink απέτυχε: Η ακύρωση (XML Cancel) είναι διαθέσιμη μόνο την "
+"ίδια ημέρα με τη συναλλαγή. Χρησιμοποιήστε το κουμπί επιστροφής χρημάτων του "
+"WooCommerce για XML Refund."
+
+#: src/Admin/OrderActions.php:126
+msgid "Cardlink void failed: Gateway not available or XML API disabled."
+msgstr ""
+"Η ακύρωση Cardlink απέτυχε: Η πύλη πληρωμής δεν είναι διαθέσιμη ή το XML API "
+"είναι απενεργοποιημένο."
+
+#: src/Admin/OrderActions.php:132
+msgid "Cardlink void failed: Cardlink order ID not found."
+msgstr ""
+"Η ακύρωση Cardlink απέτυχε: Δεν βρέθηκε αναγνωριστικό παραγγελίας Cardlink."
+
+#: src/Admin/OrderActions.php:150 src/Admin/OrderMetaBox.php:196
+#, php-format
+msgid "Cardlink void successful: %1$s %2$s"
+msgstr "Επιτυχής ακύρωση Cardlink: %1$s %2$s"
+
+#: src/Admin/OrderActions.php:152 src/Admin/OrderMetaBox.php:198
+msgid "Payment voided via Cardlink."
+msgstr "Η πληρωμή ακυρώθηκε μέσω Cardlink."
+
+#: src/Admin/OrderActions.php:155 src/Admin/OrderMetaBox.php:202
+#, php-format
+msgid "Cardlink void failed: %s"
+msgstr "Η ακύρωση Cardlink απέτυχε: %s"
+
+#: src/Admin/OrderMetaBox.php:40
+msgid "Cardlink Transaction"
+msgstr "Συναλλαγή Cardlink"
+
+#: src/Admin/OrderMetaBox.php:61
+msgid "This order was not paid via Cardlink."
+msgstr "Αυτή η παραγγελία δεν πληρώθηκε μέσω Cardlink."
+
+#: src/Admin/OrderMetaBox.php:67 src/Admin/OrderMetaBox.php:121
+msgid "Gateway not available."
+msgstr "Η πύλη πληρωμής δεν είναι διαθέσιμη."
+
+#: src/Admin/OrderMetaBox.php:78 src/Admin/OrderMetaBox.php:448
+msgid "Loading transaction info..."
+msgstr "Φόρτωση πληροφοριών συναλλαγής..."
+
+#: src/Admin/OrderMetaBox.php:99
+msgid "Permission denied."
+msgstr "Δεν επιτρέπεται η πρόσβαση."
+
+#: src/Admin/OrderMetaBox.php:104
+msgid "XML API is not enabled."
+msgstr "Το XML API δεν είναι ενεργοποιημένο."
+
+#: src/Admin/OrderMetaBox.php:111 src/Ajax/AjaxHandler.php:83
+#: src/Ajax/AjaxHandler.php:108
+msgid "Invalid order ID."
+msgstr "Μη έγκυρο αναγνωριστικό παραγγελίας."
+
+#: src/Admin/OrderMetaBox.php:116 src/Ajax/AjaxHandler.php:88
+#: src/Ajax/AjaxHandler.php:113 src/Gateway/AbstractCardlinkGateway.php:178
+msgid "Order not found."
+msgstr "Η παραγγελία δεν βρέθηκε."
+
+#: src/Admin/OrderMetaBox.php:130 src/Gateway/AbstractCardlinkGateway.php:191
+msgid ""
+"Cardlink order ID not found. This order may have been placed before XML API "
+"integration."
+msgstr ""
+"Δεν βρέθηκε αναγνωριστικό παραγγελίας Cardlink. Η παραγγελία αυτή μπορεί να "
+"έχει πραγματοποιηθεί πριν από την ενσωμάτωση του XML API."
+
+#: src/Admin/OrderMetaBox.php:152
+msgid "Failed to fetch status."
+msgstr "Αποτυχία ανάκτησης κατάστασης."
+
+#: src/Admin/OrderMetaBox.php:165
+#, php-format
+msgid ""
+"Capture amount (%1$s %3$s) exceeds the authorized order total (%2$s %3$s)."
+msgstr ""
+"Το ποσό είσπραξης (%1$s %3$s) υπερβαίνει το εγκεκριμένο σύνολο παραγγελίας "
+"(%2$s %3$s)."
+
+#: src/Admin/OrderMetaBox.php:181
+msgid "Capture successful."
+msgstr "Επιτυχής είσπραξη."
+
+#: src/Admin/OrderMetaBox.php:183
+msgid "Capture failed."
+msgstr "Η είσπραξη απέτυχε."
+
+#: src/Admin/OrderMetaBox.php:191
+msgid ""
+"Void (XML Cancel) is only available on the same day as the transaction. Use "
+"the WooCommerce refund button to issue an XML Refund."
+msgstr ""
+"Η ακύρωση (XML Cancel) είναι διαθέσιμη μόνο την ίδια ημέρα με τη συναλλαγή. "
+"Χρησιμοποιήστε το κουμπί επιστροφής χρημάτων του WooCommerce για XML Refund."
+
+#: src/Admin/OrderMetaBox.php:199
+msgid "Void successful."
+msgstr "Επιτυχής ακύρωση."
+
+#: src/Admin/OrderMetaBox.php:201
+msgid "Void failed."
+msgstr "Η ακύρωση απέτυχε."
+
+#: src/Admin/OrderMetaBox.php:210
+msgid ""
+"XML Refund is not available on the same day as the transaction. Use Void "
+"(XML Cancel) instead."
+msgstr ""
+"Το XML Refund δεν είναι διαθέσιμο την ίδια ημέρα με τη συναλλαγή. "
+"Χρησιμοποιήστε αντ' αυτού το Void (XML Cancel)."
+
+#: src/Admin/OrderMetaBox.php:216
+msgid "Invalid refund amount. Please enter a value greater than zero."
+msgstr "Μη έγκυρο ποσό επιστροφής. Εισάγετε τιμή μεγαλύτερη από μηδέν."
+
+#: src/Admin/OrderMetaBox.php:224
+#, php-format
+msgid ""
+"Refund amount (%1$s %3$s) exceeds the remaining refundable balance (%2$s "
+"%3$s)."
+msgstr ""
+"Το ποσό επιστροφής (%1$s %3$s) υπερβαίνει το εναπομείναν ποσό επιστροφής "
+"(%2$s %3$s)."
+
+#: src/Admin/OrderMetaBox.php:237
+#, php-format
+msgid "Cardlink refund successful: %1$s %2$s"
+msgstr "Επιτυχής επιστροφή Cardlink: %1$s %2$s"
+
+#: src/Admin/OrderMetaBox.php:244
+msgid "Refund successful."
+msgstr "Επιτυχής επιστροφή χρημάτων."
+
+#: src/Admin/OrderMetaBox.php:248
+msgid "Refund failed."
+msgstr "Η επιστροφή χρημάτων απέτυχε."
+
+#: src/Admin/OrderMetaBox.php:249 src/Gateway/AbstractCardlinkGateway.php:208
+#: src/Gateway/AbstractCardlinkGateway.php:218
+#, php-format
+msgid "Cardlink refund failed: %s"
+msgstr "Η επιστροφή Cardlink απέτυχε: %s"
+
+#: src/Admin/OrderMetaBox.php:255
+msgid "Unknown action."
+msgstr "Άγνωστη ενέργεια."
+
+#: src/Admin/OrderMetaBox.php:318
+msgid "Status"
+msgstr "Κατάσταση"
+
+#: src/Admin/OrderMetaBox.php:319
+msgid "Transaction ID"
+msgstr "Αναγνωριστικό Συναλλαγής"
+
+#: src/Admin/OrderMetaBox.php:320
+msgid "Amount"
+msgstr "Ποσό"
+
+#: src/Admin/OrderMetaBox.php:321
+msgid "Payment Ref"
+msgstr "Αναφορά Πληρωμής"
+
+#: src/Admin/OrderMetaBox.php:325
+msgid "Settled"
+msgstr "Διακανονισμένη"
+
+#: src/Admin/OrderMetaBox.php:326
+msgid "In transit"
+msgstr "Σε μεταφορά"
+
+#: src/Admin/OrderMetaBox.php:327
+msgid "Not settled"
+msgstr "Μη διακανονισμένη"
+
+#: src/Admin/OrderMetaBox.php:329
+msgid "Settlement"
+msgstr "Διακανονισμός"
+
+#: src/Admin/OrderMetaBox.php:336 src/Admin/OrderMetaBox.php:340
+#: src/Admin/OrderMetaBox.php:401
+msgid "Capture"
+msgstr "Είσπραξη"
+
+#: src/Admin/OrderMetaBox.php:342 src/Admin/OrderMetaBox.php:367
+msgid "Max:"
+msgstr "Μέγ.:"
+
+#: src/Admin/OrderMetaBox.php:347 src/Admin/OrderMetaBox.php:356
+msgid "Void"
+msgstr "Ακύρωση"
+
+#: src/Admin/OrderMetaBox.php:361
+msgid "XML Refund"
+msgstr "XML Επιστροφή"
+
+#: src/Admin/OrderMetaBox.php:365 src/Admin/OrderMetaBox.php:429
+msgid "Refund"
+msgstr "Επιστροφή"
+
+#: src/Admin/OrderMetaBox.php:369
+msgid "No refundable amount remaining."
+msgstr "Δεν υπάρχει εναπομείναν ποσό επιστροφής."
+
+#: src/Admin/OrderMetaBox.php:375
+msgid "Refresh"
+msgstr "Ανανέωση"
+
+#: src/Admin/OrderMetaBox.php:385
+msgid "Retry"
+msgstr "Επανάληψη"
+
+#: src/Admin/OrderMetaBox.php:394
+msgid "Please enter a valid capture amount greater than zero."
+msgstr "Εισάγετε έγκυρο ποσό είσπραξης μεγαλύτερο από μηδέν."
+
+#: src/Admin/OrderMetaBox.php:398
+msgid "Capture amount exceeds the authorized order total."
+msgstr "Το ποσό είσπραξης υπερβαίνει το εγκεκριμένο σύνολο παραγγελίας."
+
+#: src/Admin/OrderMetaBox.php:403 src/Admin/OrderMetaBox.php:412
+#: src/Admin/OrderMetaBox.php:431
+msgid "Processing..."
+msgstr "Επεξεργασία..."
+
+#: src/Admin/OrderMetaBox.php:411
+msgid "Are you sure you want to void this transaction?"
+msgstr "Είστε σίγουροι ότι θέλετε να ακυρώσετε αυτή τη συναλλαγή;"
+
+#: src/Admin/OrderMetaBox.php:422
+msgid "Please enter a valid refund amount greater than zero."
+msgstr "Εισάγετε έγκυρο ποσό επιστροφής μεγαλύτερο από μηδέν."
+
+#: src/Admin/OrderMetaBox.php:426
+msgid "Refund amount exceeds the remaining refundable balance."
+msgstr "Το ποσό επιστροφής υπερβαίνει το εναπομείναν ποσό επιστροφής."
+
+#: src/Admin/OrderMetaBox.php:453
+msgid "Error loading transaction status."
+msgstr "Σφάλμα φόρτωσης κατάστασης συναλλαγής."
+
+#: src/Admin/SettingsFields.php:19 src/Admin/SettingsFields.php:140
 msgid "Enable/Disable"
 msgstr "Ενεργοποίηση/Απενεργοποίηση"
 
-#: includes/class-cardlink-payment-gateway-woocommerce.php:118
+#: src/Admin/SettingsFields.php:21
 msgid "Enable Cardlink Payment Gateway"
 msgstr "Ενεργοποίηση του Cardlink Payment Gateway"
 
-#: includes/class-cardlink-payment-gateway-woocommerce.php:119
+#: src/Admin/SettingsFields.php:22 src/Admin/SettingsFields.php:143
 msgid "Enable or disable the gateway."
-msgstr "Ενεργοποίηση του Cardlink Payment Gateway."
+msgstr "Ενεργοποίηση ή απενεργοποίηση της πύλης πληρωμής."
 
-#: includes/class-cardlink-payment-gateway-woocommerce.php:124
+#: src/Admin/SettingsFields.php:27
 msgid "Test Environment"
 msgstr "Περιβάλλον δοκιμών"
 
-#: includes/class-cardlink-payment-gateway-woocommerce.php:126
+#: src/Admin/SettingsFields.php:29
 msgid "Enable Cardlink Test Environment"
 msgstr "Ενεργοποίηση του περιβάλλοντος δοκιμών της Cardlink"
 
-#: includes/class-cardlink-payment-gateway-woocommerce.php:130
+#: src/Admin/SettingsFields.php:33 src/Admin/SettingsFields.php:162
 msgid "Select Acquirer"
 msgstr "Επιλέξτε οργανισμό αποδοχής πληρωμών"
 
-#: includes/class-cardlink-payment-gateway-woocommerce.php:133
+#: src/Admin/SettingsFields.php:36
 msgid "Select your acquirer bank"
 msgstr "Επιλέξτε οργανισμό αποδοχής πληρωμών"
 
-#: includes/class-cardlink-payment-gateway-woocommerce.php:136
+#: src/Admin/SettingsFields.php:39 src/Admin/SettingsFields.php:148
 msgid "Title"
 msgstr "Τίτλος"
 
-#: includes/class-cardlink-payment-gateway-woocommerce.php:138
+#: src/Admin/SettingsFields.php:41 src/Admin/SettingsFields.php:150
 msgid "This controls the title which the user sees during checkout."
 msgstr "Ελέγχει τον τίτλο που βλέπει ο χρήστης στη σελίδα πληρωμής."
 
-#: includes/class-cardlink-payment-gateway-woocommerce.php:140
+#: src/Admin/SettingsFields.php:43
 msgid "Credit card via Cardlink"
 msgstr "Πληρωμή με κάρτα μέσω της Cardlink"
 
-#: includes/class-cardlink-payment-gateway-woocommerce.php:143
+#: src/Admin/SettingsFields.php:46 src/Admin/SettingsFields.php:155
 msgid "Description"
 msgstr "Περιγραφή"
 
-#: includes/class-cardlink-payment-gateway-woocommerce.php:145
+#: src/Admin/SettingsFields.php:48 src/Admin/SettingsFields.php:157
 msgid "This controls the description which the user sees during checkout."
 msgstr "Ελέγχει την περιγραφή που βλέπει ο χρήστης στη σελίδα πληρωμής."
 
-#: includes/class-cardlink-payment-gateway-woocommerce.php:147
+#: src/Admin/SettingsFields.php:50
 msgid ""
 "Pay Via Cardlink: Accepts Visa, Mastercard, Maestro, American Express, "
 "Diners, Discover."
@@ -113,28 +398,28 @@ msgstr ""
 "Πληρώστε μέσω της Cardlink: Δέχεται Visa, Mastercard, Maestro, American "
 "Express, Diners και Discover."
 
-#: includes/class-cardlink-payment-gateway-woocommerce.php:150
+#: src/Admin/SettingsFields.php:53 src/Admin/SettingsFields.php:172
 msgid "Merchant ID"
 msgstr "MID επιχείρησης"
 
-#: includes/class-cardlink-payment-gateway-woocommerce.php:152
+#: src/Admin/SettingsFields.php:55
 msgid "Enter Your Cardlink Merchant ID"
 msgstr "Εισάγετε το Cardlink MID της επιχείρησης"
 
-#: includes/class-cardlink-payment-gateway-woocommerce.php:157
+#: src/Admin/SettingsFields.php:60
 msgid "Shared Secret key"
 msgstr "Shared Secret key"
 
-#: includes/class-cardlink-payment-gateway-woocommerce.php:159
+#: src/Admin/SettingsFields.php:62
 msgid "Enter your Shared Secret key"
 msgstr "Εισάγετε το Shared Secret key"
 
-#: includes/class-cardlink-payment-gateway-woocommerce.php:164
+#: src/Admin/SettingsFields.php:67
 msgid "Maximum number of installments regardless of the total order amount"
 msgstr ""
 "Μέγιστος αριθμός δόσεων ανεξάρτητα από το συνολικό ποσό της παραγγελίας"
 
-#: includes/class-cardlink-payment-gateway-woocommerce.php:167
+#: src/Admin/SettingsFields.php:70
 msgid ""
 "1 to 60 Installments, 1 for one time payment. You must contact Cardlink "
 "first."
@@ -142,40 +427,59 @@ msgstr ""
 "1 έως 60 δόσεις, 1 για εφάπαξ πληρωμή. Πρέπει να επικοινωνήσετε πρώτα με την "
 "Cardlink."
 
-#: includes/class-cardlink-payment-gateway-woocommerce.php:170
+#: src/Admin/SettingsFields.php:73
 msgid "Maximum number of installments depending on the total order amount"
 msgstr "Μέγιστος αριθμός δόσεων ανάλογα με το συνολικό ποσό αγοράς"
 
-#: includes/class-cardlink-payment-gateway-woocommerce.php:173
+#: src/Admin/SettingsFields.php:76
 msgid "Add amount and installments for each row. The limit is 60."
 msgstr "Προσθέστε ποσό και δόσεις για κάθε σειρά. Το ανώτατο όριο είναι 60."
 
-#: includes/class-cardlink-payment-gateway-woocommerce.php:176
+#: src/Admin/SettingsFields.php:79
 msgid "Pre-Authorize"
 msgstr "Προ-έγκριση"
 
-#: includes/class-cardlink-payment-gateway-woocommerce.php:178
+#: src/Admin/SettingsFields.php:81
 msgid "Enable to capture preauthorized payments"
 msgstr "Ενεργοποίηση είσπραξης πληρωμών με προέγκριση"
 
-#: includes/class-cardlink-payment-gateway-woocommerce.php:179
+#: src/Admin/SettingsFields.php:82
 msgid ""
 "Default payment method is Purchase, enable for Pre-Authorized payments. You "
 "will then need to accept them from Cardlink eCommerce Tool."
 msgstr ""
 "Η προεπιλεγμένη μέθοδος πληρωμής είναι η Αγορά. Ενεργοποιήστε τις πληρωμές "
 "με Προέγκριση. Στη συνέχεια θα πρέπει να τις αποδεχτείτε από το Cardlink "
-"Payment Gateway."
+"eCommerce Tool."
 
-#: includes/class-cardlink-payment-gateway-woocommerce.php:183
+#: src/Admin/SettingsFields.php:86
+msgid "XML API Operations"
+msgstr "Λειτουργίες XML API"
+
+#: src/Admin/SettingsFields.php:88
+msgid "Enable XML API (Capture, Refund, Void, Status)"
+msgstr "Ενεργοποίηση XML API (Είσπραξη, Επιστροφή, Ακύρωση, Κατάσταση)"
+
+#: src/Admin/SettingsFields.php:89
+msgid ""
+"Enables secondary operations directly from WooCommerce admin: capture pre-"
+"authorized payments, refund, void, and check transaction status. The XML API "
+"channel must be enabled by Cardlink for your merchant account."
+msgstr ""
+"Ενεργοποιεί δευτερεύουσες λειτουργίες απευθείας από το διαχειριστικό "
+"WooCommerce: είσπραξη πληρωμών με προέγκριση, επιστροφή χρημάτων, ακύρωση "
+"και έλεγχο κατάστασης συναλλαγής. Το κανάλι XML API πρέπει να ενεργοποιηθεί "
+"από την Cardlink για τον λογαριασμό σας."
+
+#: src/Admin/SettingsFields.php:93
 msgid "Store card details"
 msgstr "Αποθήκευση των στοιχείων της κάρτας"
 
-#: includes/class-cardlink-payment-gateway-woocommerce.php:185
+#: src/Admin/SettingsFields.php:95
 msgid "Enable Tokenization"
 msgstr "Ενεργοποίηση Tokenization"
 
-#: includes/class-cardlink-payment-gateway-woocommerce.php:186
+#: src/Admin/SettingsFields.php:96
 msgid ""
 "If checked the user will have the ability to store credit card details for "
 "future purchases. You must contact Cardlink first."
@@ -184,13 +488,13 @@ msgstr ""
 "πιστωτικής κάρτας για μελλοντικές αγορές. Πρέπει πρώτα να επικοινωνήσετε με "
 "την Cardlink."
 
-#: includes/class-cardlink-payment-gateway-woocommerce.php:190
+#: src/Admin/SettingsFields.php:100
 msgid "Return page URL <br />(Successful or Failed Transactions)"
-msgstr "URL σελίδας επιστροφής <br /> (Επιτυχημένες ή Αποτυχημένες Συναλλαγές)"
+msgstr "URL σελίδας επιστροφής <br />(Επιτυχημένες ή Αποτυχημένες Συναλλαγές)"
 
-#: includes/class-cardlink-payment-gateway-woocommerce.php:193
+#: src/Admin/SettingsFields.php:103
 msgid ""
-"We recommend you to select the default “Thank You Page”, in order to "
+"We recommend you to select the default \"Thank You Page\", in order to "
 "automatically serve both successful and failed transactions, with the latter "
 "also offering the option to try the payment again.<br /> If you select a "
 "different page, you will have to handle failed payments yourself by adding "
@@ -202,15 +506,15 @@ msgstr ""
 "πληρωμή.<br /> Αν επιλέξετε διαφορετική σελίδα, θα πρέπει να διαχειριστείτε "
 "μόνοι σας τις αποτυχημένες πληρωμές, προσθέτοντας δικό σας κώδικα."
 
-#: includes/class-cardlink-payment-gateway-woocommerce.php:197
+#: src/Admin/SettingsFields.php:107
 msgid "Pay in website"
 msgstr "Πληρωμή μέσω σελίδας στο κατάστημα"
 
-#: includes/class-cardlink-payment-gateway-woocommerce.php:199
+#: src/Admin/SettingsFields.php:109
 msgid "Enable payment iframe"
 msgstr "Ενεργοποίηση πληρωμής μέσω iframe"
 
-#: includes/class-cardlink-payment-gateway-woocommerce.php:200
+#: src/Admin/SettingsFields.php:110
 msgid ""
 "Customers will stay in website to complete payments without redirecting to "
 "Cardlink's eCommerce payment page.<br />You must have a valid SSL "
@@ -221,28 +525,28 @@ msgstr ""
 "Cardlink.<br />Πρέπει να έχετε εγκαταστήσει ένα έγκυρο πιστοποιητικό SSL "
 "στον τομέα σας."
 
-#: includes/class-cardlink-payment-gateway-woocommerce.php:204
+#: src/Admin/SettingsFields.php:114
 msgid "Css url path"
 msgstr "Css url path"
 
-#: includes/class-cardlink-payment-gateway-woocommerce.php:206
+#: src/Admin/SettingsFields.php:116
 msgid ""
 "Url of custom CSS stylesheet, to be used to display payment page styles."
 msgstr ""
 "URL του CSS stylesheet που θα χρησιμοποιηθεί για την εμφάνιση των σελίδων "
 "πληρωμής."
 
-#: includes/class-cardlink-payment-gateway-woocommerce.php:210
+#: src/Admin/SettingsFields.php:120
 msgid "Enable Debug mode"
 msgstr "Ενεργοποίηση λειτουργίας Εντοπισμού Σφαλμάτων"
 
-#: includes/class-cardlink-payment-gateway-woocommerce.php:212
+#: src/Admin/SettingsFields.php:122
 msgid "Enabling this will log certain information"
 msgstr ""
 "Η ενεργοποίηση της λειτουργίας θα οδηγήσει στην καταγραφή ορισμένων "
 "πληροφοριών"
 
-#: includes/class-cardlink-payment-gateway-woocommerce.php:214
+#: src/Admin/SettingsFields.php:124
 msgid ""
 "Enabling this (and the debug mode from your wp-config file) will log "
 "information, e.g. responses, which will help in debugging issues."
@@ -251,110 +555,250 @@ msgstr ""
 "το αρχείο σας wp-config) θα οδηγήσει στην καταγραφή πληροφοριών, π.χ. "
 "αποκρίσεων, οι οποίες θα σας βοηθήσουν στον εντοπισμό σφαλμάτων."
 
-#: includes/class-cardlink-payment-gateway-woocommerce.php:239
+#: src/Admin/SettingsFields.php:127
+msgid "Background confirmation url"
+msgstr "URL επιβεβαίωσης παρασκηνίου"
+
+#: src/Admin/SettingsFields.php:129
+msgid ""
+"Send this field value to Cardlink to enable the Background confirmation "
+"check for payments."
+msgstr ""
+"Θα πρέπει να αποστείλετε την τιμή του πεδίου στην Cardlink για να σας "
+"ενεργοποιήσουν τον έλεγχο πληρωμών Background confirmation."
+
+#: src/Admin/SettingsFields.php:142
+msgid "Enable IRIS Payment Gateway"
+msgstr "Ενεργοποίηση του IRIS Payment Gateway"
+
+#: src/Admin/SettingsFields.php:152
+msgid "Credit card via IRIS"
+msgstr "Πληρωμή με κάρτα μέσω IRIS"
+
+#: src/Admin/SettingsFields.php:165
+msgid "Inherit from Cardlink Payment Gateway"
+msgstr "Χρήση των ρυθμίσεων του Cardlink Payment Gateway"
+
+#: src/Admin/SettingsFields.php:169
+msgid ""
+"Select your acquirer bank or inherit settings from the main Cardlink gateway."
+msgstr ""
+"Επιλέξτε τον οργανισμό αποδοχής πληρωμών ή χρησιμοποιήστε τις ρυθμίσεις της "
+"κύριας πύλης Cardlink."
+
+#: src/Admin/SettingsFields.php:174
+msgid ""
+"Enter the IRIS Merchant ID. Required when not inheriting from Cardlink "
+"Payment Gateway."
+msgstr ""
+"Εισάγετε το IRIS Merchant ID. Απαιτείται όταν δεν κληρονομείτε ρυθμίσεις από "
+"το Cardlink Payment Gateway."
+
+#: src/Admin/SettingsFields.php:179
+msgid "Shared Secret Key"
+msgstr "Shared Secret Key"
+
+#: src/Admin/SettingsFields.php:181
+msgid ""
+"Enter the IRIS Shared Secret Key. Required when not inheriting from Cardlink "
+"Payment Gateway."
+msgstr ""
+"Εισάγετε το IRIS Shared Secret Key. Απαιτείται όταν δεν κληρονομείτε "
+"ρυθμίσεις από το Cardlink Payment Gateway."
+
+#: src/Admin/SettingsFields.php:205
+msgid "Select Page"
+msgstr "Επιλέξτε Σελίδα"
+
+#: src/Admin/SettingsFields.php:220
 msgid "Thank you page"
 msgstr "Thank you page"
 
-#: includes/class-cardlink-payment-gateway-woocommerce.php:327
-msgid "Choose Installments"
-msgstr "Επιλέξτε δόσεις"
+#: src/Ajax/AjaxHandler.php:46
+msgid "You must be logged in."
+msgstr "Πρέπει να είστε συνδεδεμένοι."
 
-#: includes/class-cardlink-payment-gateway-woocommerce.php:331
-msgid "Without installments"
-msgstr "Χωρίς δόσεις"
+#: src/Ajax/AjaxHandler.php:52
+msgid "Invalid card ID."
+msgstr "Μη έγκυρο αναγνωριστικό κάρτας."
 
-#: includes/class-cardlink-payment-gateway-woocommerce.php:371
-msgid "Remove card"
-msgstr "Αφαίρεση κάρτας"
+#: src/Ajax/AjaxHandler.php:61
+msgid "You do not have permission to delete this card."
+msgstr "Δεν έχετε άδεια διαγραφής αυτής της κάρτας."
 
-#: includes/class-cardlink-payment-gateway-woocommerce.php:381
-msgid "Add your credit card"
-msgstr "Προσθήκη κάρτας"
+#: src/Ajax/AjaxHandler.php:92 src/Ajax/AjaxHandler.php:117
+msgid "Unauthorized."
+msgstr "Μη εξουσιοδοτημένος."
 
-#: includes/class-cardlink-payment-gateway-woocommerce.php:388
-msgid "Store your card?"
-msgstr "Θέλετε να αποθηκεύσετε την κάρτα σας;"
-
-#: includes/class-cardlink-payment-gateway-woocommerce.php:602
-msgid "Pay via Cardlink"
-msgstr "Πληρώστε με Cardlink checkout"
-
-#: includes/class-cardlink-payment-gateway-woocommerce.php:611
-#: includes/class-cardlink-payment-gateway-woocommerce.php:685
+#: src/Gateway/AbstractCardlinkGateway.php:128 src/Payment/FormRenderer.php:86
 msgid "Thank you for your order. We are now redirecting you to make payment."
 msgstr ""
 "Ευχαριστούμε για την παραγγελία σας. Σας ανακατευθύνουμε στη σελίδα πληρωμών "
 "της Cardlink για να διεκπεραιώσετε την πληρωμή σας."
 
-#: includes/class-cardlink-payment-gateway-woocommerce.php:755
-msgid ""
-"A technical problem occured. <br />The transaction wasn't successful, "
-"payment wasn't received."
-msgstr ""
-"Παρουσιάστηκε ένα τεχνικό πρόβλημα. <br />Μη επιτυχής συναλλαγή λόγω "
-"τεχνικού προβλήματος. Η πληρωμή σας δεν ολοκληρώθηκε."
+#: src/Gateway/AbstractCardlinkGateway.php:182
+msgid "XML API service is not available."
+msgstr "Η υπηρεσία XML API δεν είναι διαθέσιμη."
 
-#: includes/class-cardlink-payment-gateway-woocommerce.php:776
+#: src/Gateway/AbstractCardlinkGateway.php:186
+msgid "Invalid refund amount."
+msgstr "Μη έγκυρο ποσό επιστροφής."
+
+#: src/Gateway/AbstractCardlinkGateway.php:205
+msgid "Failed to retrieve transaction status."
+msgstr "Αποτυχία ανάκτησης κατάστασης συναλλαγής."
+
+#: src/Gateway/AbstractCardlinkGateway.php:217
+msgid "Transaction is currently in settlement transit. Please try again later."
+msgstr ""
+"Η συναλλαγή βρίσκεται σε εξέλιξη διακανονισμού. Παρακαλώ δοκιμάστε αργότερα."
+
+#: src/Gateway/AbstractCardlinkGateway.php:234
+msgid "void"
+msgstr "ακύρωση"
+
+#: src/Gateway/AbstractCardlinkGateway.php:245
+msgid "refund"
+msgstr "επιστροφή"
+
+#: src/Gateway/AbstractCardlinkGateway.php:252
+#, php-format
+msgid "Cardlink %1$s successful: %2$s %3$s"
+msgstr "Επιτυχής %1$s Cardlink: %2$s %3$s"
+
+#: src/Gateway/AbstractCardlinkGateway.php:264
+#, php-format
+msgid "Cardlink %1$s failed: %2$s"
+msgstr "Αποτυχία %1$s Cardlink: %2$s"
+
+#: src/Gateway/CardlinkGateway.php:80
+msgid "Cardlink Payment Gateway"
+msgstr "Cardlink Payment Gateway"
+
+#: src/Gateway/CardlinkGateway.php:81
+msgid ""
+"Cardlink Payment Gateway allows you to accept payment through various "
+"schemes such as Visa, Mastercard, Maestro, American Express, Diners, "
+"Discover cards on your Woocommerce Powered Site."
+msgstr ""
+"Με το Cardlink Payment Gateway μπορείτε να δέχεστε πληρωμές στο Woocommerce "
+"e-shop σας μέσω διαφορετικών σχημάτων, όπως Visa, Mastercard, Maestro, "
+"American Express, Diners και Discover."
+
+#: src/Gateway/CardlinkGateway.php:364 src/Gateway/IrisGateway.php:230
+msgid "< Back"
+msgstr "< Πίσω"
+
+#: src/Gateway/IrisGateway.php:64
+msgid "Cardlink Payment Gateway with IRIS"
+msgstr "Cardlink Payment Gateway με IRIS"
+
+#: src/Gateway/IrisGateway.php:65
+msgid ""
+"Cardlink Payment Gateway allows you to accept payment through IRIS on your "
+"Woocommerce Powered Site."
+msgstr ""
+"Το Cardlink Payment Gateway σας επιτρέπει να δέχεστε πληρωμές με IRIS στο "
+"ηλεκτρονικό σας κατάστημα."
+
+#: src/Gateway/IrisGateway.php:129
+msgid ""
+"IRIS Merchant ID is required when not inheriting from Cardlink Payment "
+"Gateway."
+msgstr ""
+"Το IRIS Merchant ID είναι υποχρεωτικό όταν δεν κληρονομείτε ρυθμίσεις από το "
+"Cardlink Payment Gateway."
+
+#: src/Gateway/IrisGateway.php:132
+msgid ""
+"IRIS Shared Secret Key is required when not inheriting from Cardlink Payment "
+"Gateway."
+msgstr ""
+"Το IRIS Shared Secret Key είναι υποχρεωτικό όταν δεν κληρονομείτε ρυθμίσεις "
+"από το Cardlink Payment Gateway."
+
+#: src/Installment/InstallmentRenderer.php:40
+msgid "Choose Installments"
+msgstr "Επιλέξτε δόσεις"
+
+#: src/Installment/InstallmentRenderer.php:43
+msgid "Without installments"
+msgstr "Χωρίς δόσεις"
+
+#: src/Payment/FormRenderer.php:34
+msgid "Pay via Cardlink"
+msgstr "Πληρώστε με Cardlink checkout"
+
+#: src/Payment/ResponseHandler.php:66 src/Payment/ResponseHandler.php:277
+msgid ""
+"A technical problem occurred. The transaction wasn't successful, payment "
+"wasn't received."
+msgstr ""
+"Παρουσιάστηκε ένα τεχνικό πρόβλημα. Μη επιτυχής συναλλαγή. Η πληρωμή σας δεν "
+"ολοκληρώθηκε."
+
+#: src/Payment/ResponseHandler.php:86
+msgid "Payment canceled by the customer."
+msgstr "Η πληρωμή ακυρώθηκε από τον πελάτη."
+
+#: src/Payment/ResponseHandler.php:95
+msgid "Payment was refused."
+msgstr "Η πληρωμή απορρίφθηκε."
+
+#: src/Payment/ResponseHandler.php:103
+msgid "A technical problem occurred."
+msgstr "Παρουσιάστηκε ένα τεχνικό πρόβλημα."
+
+#: src/Payment/ResponseHandler.php:172
+#, php-format
+msgid "Payment Via Cardlink. Transaction ID: %s"
+msgstr "Πληρωμή μέσω Cardlink. Αναγνωριστικό Συναλλαγής: %s"
+
+#: src/Payment/ResponseHandler.php:203
 msgid "Payment Via Cardlink<br />Transaction ID: "
 msgstr "Πληρωμή μέσω της Cardlink<br />Αναγνωριστικό Συναλλαγής: "
 
-#: includes/class-cardlink-payment-gateway-woocommerce.php:777
+#: src/Payment/ResponseHandler.php:226
+#, php-format
 msgid ""
-"Thank you for shopping with us.<br />Your transaction was successful, "
-"payment was received.<br />Your order is currently being processed."
+"Cardlink payment authorized (pre-auth). Transaction ID: %s. Awaiting capture."
 msgstr ""
-"Ευχαριστούμε που μας επιλέξατε.<br />Η συναλλαγή σας ήταν επιτυχής. Λάβαμε "
-"την πληρωμή.<br />Η παραγγελία σας βρίσκεται στο στάδιο της επεξεργασίας."
+"Εγκρίθηκε πληρωμή Cardlink (προέγκριση). Αναγνωριστικό Συναλλαγής: %s. "
+"Αναμονή είσπραξης."
 
-#: includes/class-cardlink-payment-gateway-woocommerce.php:780
+#: src/Payment/ResponseHandler.php:231
+#, php-format
 msgid ""
-"Payment Received.<br />Your order is currently being processed.<br />We will "
-"be shipping your order to you soon.<br />Cardlink ID: "
+"Payment pre-authorized via Cardlink. Transaction ID: %s. Use Capture to "
+"complete the payment."
 msgstr ""
-"Λάβαμε την πληρωμή.<br />Η παραγγελία σας βρίσκεται στο στάδιο της "
-"επεξεργασίας.<br />Θα σας αποστείλουμε την παραγγελία σας σύντομα.<br /"
-">Αναγνωριστικό ID Cardlink: "
+"Πληρωμή με προέγκριση μέσω Cardlink. Αναγνωριστικό Συναλλαγής: %s. "
+"Χρησιμοποιήστε Είσπραξη για την ολοκλήρωση της πληρωμής."
 
-#: includes/class-cardlink-payment-gateway-woocommerce.php:784
-msgid ""
-"Thank you for shopping with us.<br />Your transaction was successful, "
-"payment was received.<br />Your order is now complete."
-msgstr ""
-"Ευχαριστούμε που μας επιλέξατε.<br />Η συναλλαγή σας ήταν επιτυχής. Λάβαμε "
-"την πληρωμή.<br />Η παραγγελία σας ολοκληρώθηκε."
+#: src/Payment/ResponseHandler.php:262
+msgid "Payment pre-authorized via Cardlink<br />Transaction ID: "
+msgstr "Πληρωμή με προέγκριση μέσω Cardlink<br />Αναγνωριστικό Συναλλαγής: "
 
-#: includes/class-cardlink-payment-gateway-woocommerce.php:786
-msgid ""
-"Payment Received.<br />Your order is now complete.<br />Cardlink Transaction "
-"ID: "
-msgstr ""
-"Λάβαμε την πληρωμή.<br />Η παραγγελία σας ολοκληρώθηκε.<br />Αναγνωριστικό "
-"συναλλαγής Cardlink: "
+#: src/Rest/PaymentConfirmationEndpoint.php:58
+msgid "Payment received from Background confirmation service."
+msgstr "Η πληρωμή ελήφθη από την υπηρεσία Background confirmation."
 
-#: includes/class-cardlink-payment-gateway-woocommerce.php:826
-msgid ""
-"Thank you for shopping with us. <br />However, the transaction wasn't "
-"successful, payment was cancelled."
-msgstr ""
-"Ευχαριστούμε που μας επιλέξατε. <br />Ωστόσο, η συναλλαγή δεν ήταν επιτυχής. "
-"Η πληρωμή ακυρώθηκε."
+#: src/Rest/TokenizerEndpoint.php:35
+msgid "Card storage was cancelled."
+msgstr "Η αποθήκευση κάρτας ακυρώθηκε."
 
-#: includes/class-cardlink-payment-gateway-woocommerce.php:833
-#: includes/class-cardlink-payment-gateway-woocommerce.php:839
-#: includes/class-cardlink-payment-gateway-woocommerce.php:845
-msgid ""
-"Thank you for shopping with us. <br />However, the transaction wasn't "
-"successful, payment wasn't received."
-msgstr ""
-"Ευχαριστούμε που μας επιλέξατε. <br />Ωστόσο, η συναλλαγή δεν ήταν επιτυχής. "
-"Δεν λάβαμε την πληρωμή."
+#: src/Rest/TokenizerEndpoint.php:53
+msgid "Card verification failed."
+msgstr "Η επαλήθευση κάρτας απέτυχε."
 
-#~ msgid "New card"
-#~ msgstr "Νέα κάρτα"
+#: src/Rest/TokenizerEndpoint.php:89
+msgid "Card stored successfully."
+msgstr "Η κάρτα αποθηκεύτηκε επιτυχώς."
 
-#~ msgid ""
-#~ "Thank you for your order. We are now redirecting you to Cardlink "
-#~ "Paycenter to make payment."
-#~ msgstr ""
-#~ "Ευχαριστούμε για την παραγγελία σας. Σας ανακατευθύνουμε στη Σελίδα "
-#~ "Πληρωμών της Cardlink για να διεκπεραιώσετε την πληρωμή σας."
+#: src/Token/TokenFormRenderer.php:57
+msgid "Add your credit card"
+msgstr "Προσθήκη κάρτας"
+
+#: src/Token/TokenFormRenderer.php:67 src/Token/TokenFormRenderer.php:76
+msgid "Store your card?"
+msgstr "Θέλετε να αποθηκεύσετε την κάρτα σας;"

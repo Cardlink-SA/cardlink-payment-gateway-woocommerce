@@ -51,10 +51,14 @@ Here are the detailed instructions to manually install a WordPress plugin by tra
 
 == Changelog ==
 
+= 1.1.0 =
+* Added support for Cardlink's Background confirmation service.
+* Added support for XML API operations (Capture, Refund, Void, Status) within order page.
+* Plugin refactor: modernised, namespaced codebase with cleaner separation between gateway, admin, and checkout layers.
 = 1.0.14 =
-* Woocommerce Compatibility updates.
+* Woocommerce Compatibility updates. (If you already use IRIS with your own seller id, DO NOT install the new version!)
 = 1.0.13 =
-* Remove deprecated field for IRIS customer code (If you already use IRIS with your own seller id, DO NOT install the new version!).
+* Remove deprecated field for IRIS customer code. (If you already use IRIS with your own seller id, DO NOT install the new version!)
 = 1.0.12 =
 * Enabled IRIS for Worldline and Cardlink.
 = 1.0.11 =
