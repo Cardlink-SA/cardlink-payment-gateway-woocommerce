@@ -55,6 +55,13 @@ class ResponseHandler {
             );
         }
 
+        // Mark that the gateway has POSTed a response for this order (success or
+        // failure). The iframe polling (AjaxHandler::handle_check_order_status)
+        // redirects the customer's top window out of the payment iframe ONLY
+        // after this flag is set — which removes the race that previously
+        // redirected customers off the payment page before they had paid.
+        $this->order_helper->add_meta( $order->get_id(), '_cardlink_response_received', 'yes' );
+
         // Verify digests.
         try {
             $this->digest_service->verify_response( $post_data, $shared_secret );

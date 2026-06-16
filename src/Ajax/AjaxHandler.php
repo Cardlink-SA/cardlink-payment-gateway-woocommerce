@@ -30,8 +30,6 @@ class AjaxHandler {
 
     public function register(): void {
         add_action( 'wp_ajax_cardlink_delete_token', [ $this, 'handle_delete_token' ] );
-        add_action( 'wp_ajax_cardlink_set_redirection_status', [ $this, 'handle_set_redirection_status' ] );
-        add_action( 'wp_ajax_nopriv_cardlink_set_redirection_status', [ $this, 'handle_set_redirection_status' ] );
         add_action( 'wp_ajax_cardlink_check_order_status', [ $this, 'handle_check_order_status' ] );
         add_action( 'wp_ajax_nopriv_cardlink_check_order_status', [ $this, 'handle_check_order_status' ] );
     }
@@ -72,32 +70,12 @@ class AjaxHandler {
     }
 
     /**
-     * Mark order as redirected for payment (iframe mode).
-     */
-    public function handle_set_redirection_status(): void {
-        check_ajax_referer( 'cardlink_ajax_nonce', 'security' );
-
-        $order_id = absint( wp_unslash( $_POST['order_id'] ?? 0 ) );
-
-        if ( $order_id <= 0 ) {
-            $this->respond( 'error', __( 'Invalid order ID.', 'cardlink-payment-gateway' ) );
-        }
-
-        $order = wc_get_order( $order_id );
-        if ( ! $order ) {
-            $this->respond( 'error', __( 'Order not found.', 'cardlink-payment-gateway' ) );
-        }
-
-        if ( ! $this->can_access_order( $order ) ) {
-            $this->respond( 'error', __( 'Unauthorized.', 'cardlink-payment-gateway' ) );
-        }
-
-        $this->order_helper->add_meta( $order_id, 'redirected_for_payment', 'true' );
-        $this->respond( 'success', '' );
-    }
-
-    /**
      * Check order status for iframe polling.
+     *
+     * Returns `success` with a redirect URL ONLY once the gateway has POSTed
+     * its response back to the site (the `_cardlink_response_received` flag is
+     * set by ResponseHandler). Until then it returns `pending` and the customer
+     * stays on the payment iframe.
      */
     public function handle_check_order_status(): void {
         check_ajax_referer( 'cardlink_ajax_nonce', 'security' );
@@ -117,10 +95,10 @@ class AjaxHandler {
             $this->respond( 'error', __( 'Unauthorized.', 'cardlink-payment-gateway' ) );
         }
 
-        $redirected = $this->order_helper->get_meta( $order, 'redirected_for_payment' );
+        $response_received = $this->order_helper->get_meta( $order, '_cardlink_response_received' );
 
-        if ( $redirected !== 'true' ) {
-            // Payment callback has cleared the flag - redirect needed.
+        if ( $response_received === 'yes' ) {
+            // Gateway response has arrived — redirect the customer's top window.
             $gateway_settings = get_option( 'woocommerce_cardlink_payment_gateway_woocommerce_settings', [] );
             $redirect_page_id = $gateway_settings['redirect_page_id'] ?? '-1';
 
@@ -133,7 +111,7 @@ class AjaxHandler {
             $this->respond( 'success', $redirect_url ?: $order->get_checkout_order_received_url() );
         }
 
-        // Still waiting.
+        // Still waiting for the gateway response.
         $this->respond( 'pending', '' );
     }
 

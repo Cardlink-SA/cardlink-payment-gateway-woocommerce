@@ -2,8 +2,8 @@
 Contributors: cardlink
 Tags: payments, payment-gateway
 Requires at least: 5.8.3
-Tested up to: 6.8.2
-Stable tag: 6.8.2
+Tested up to: 7.0
+Stable tag: 1.1.1
 Requires PHP: 7.x - 8.x
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -50,6 +50,10 @@ Here are the detailed instructions to manually install a WordPress plugin by tra
 3. The IRIS Payment method settings screen used to configure the gateway.
 
 == Changelog ==
+
+= 1.1.1 =
+* Fixed an iframe payment issue where customers could be redirected off the payment page to the order-received page before paying (most often on the first order of a session). Redirection now happens only after the gateway has returned its response.
+* Fixed the iframe completion flow so the customer's window is reliably redirected after a successful payment.
 
 = 1.1.0 =
 * Added support for Cardlink's Background confirmation service.

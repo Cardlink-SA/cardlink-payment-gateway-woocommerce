@@ -52,22 +52,15 @@
     }
 
     /**
-     * Set redirection status for iframe mode.
-     */
-    function setRedirectionStatus(orderId) {
-        $.ajax({
-            type: 'POST',
-            url: settings.ajax_url,
-            data: {
-                action: 'cardlink_set_redirection_status',
-                security: settings.nonce,
-                order_id: orderId
-            }
-        });
-    }
-
-    /**
-     * Poll for order completion status (iframe mode).
+     * Poll for the gateway response (iframe mode).
+     *
+     * The server returns `success` with a redirect URL only after the payment
+     * gateway has POSTed its response back to the site. Until then it returns
+     * `pending` and we keep polling. We no longer pre-mark the order via a
+     * second AJAX call: the previous design raced that "set" call against this
+     * "check" call, and when the check won the empty flag was misread as
+     * "payment done", redirecting the customer off the payment page before
+     * they had paid.
      */
     function checkOrderStatus(orderId) {
         $.ajax({
@@ -81,10 +74,10 @@
             success: function (response) {
                 if (response.status === 'success' && response.response) {
                     window.top.location.href = response.response;
-                } else if (response.status === 'pending') {
+                } else {
                     setTimeout(function () {
                         checkOrderStatus(orderId);
-                    }, 1000);
+                    }, 2000);
                 }
             },
             error: function () {
@@ -99,25 +92,22 @@
      * Initialize iframe/modal payment flow.
      */
     function initModalPayment() {
-        $(document.body).on('load', '#payment_iframe', function () {
-            var orderId = $(this).data('order-id');
-            if (orderId) {
-                setRedirectionStatus(orderId);
-                checkOrderStatus(orderId);
-            }
-        });
+        var $iframe = $('#payment_iframe');
 
-        // Also check on form submit for iframe mode.
-        if ($('#payment_iframe').length && $('#payment_form').attr('target') === 'payment_iframe') {
-            var orderId = $('#payment_iframe').data('order-id');
-            if (orderId) {
-                // Delay to allow form submission.
-                setTimeout(function () {
-                    setRedirectionStatus(orderId);
-                    checkOrderStatus(orderId);
-                }, 2000);
-            }
+        if (!$iframe.length || $('#payment_form').attr('target') !== 'payment_iframe') {
+            return;
         }
+
+        var orderId = $iframe.data('order-id');
+        if (!orderId) {
+            return;
+        }
+
+        // Delay to allow the form submission into the iframe to start, then
+        // poll until the gateway response arrives.
+        setTimeout(function () {
+            checkOrderStatus(orderId);
+        }, 2000);
     }
 
     $(document).ready(function () {
