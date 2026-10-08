@@ -20,6 +20,9 @@ use WC_Payment_Gateway;
 
 abstract class AbstractCardlinkGateway extends WC_Payment_Gateway {
 
+    /** Order meta flag: set in process_payment(), consumed by the first receipt page render. */
+    protected const AUTO_SUBMIT_META_KEY = '_cardlink_auto_submit';
+
     protected DigestService $digest_service;
     protected FormBuilder $form_builder;
     protected FormRenderer $form_renderer;
@@ -85,10 +88,10 @@ abstract class AbstractCardlinkGateway extends WC_Payment_Gateway {
 
         $this->save_checkout_meta( $order_id );
 
-        // Set a flag so the receipt page knows this is a fresh submission (not a reload).
-        if ( WC()->session ) {
-            WC()->session->set( 'cardlink_receipt_ready_' . $order_id, $this->id );
-        }
+        // Mark the order so the receipt page auto-submits once (not on reload).
+        // Stored on the order, not the WC session: with the Checkout block, Store API
+        // requests running in parallel can save the session without this flag.
+        $this->order_helper->add_meta( (int) $order_id, self::AUTO_SUBMIT_META_KEY, $this->id );
 
         return [
             'result'   => 'success',
@@ -127,30 +130,50 @@ abstract class AbstractCardlinkGateway extends WC_Payment_Gateway {
     }
 
     /**
-     * Receipt page - shows redirect form only after a fresh form submission.
+     * Receipt page - shows the redirect form whenever the order still needs payment.
      *
-     * A session flag set in process_payment() ensures the payment form is not
-     * rendered on page reload, preventing unintended auto-redirects.
+     * The form auto-submits only right after process_payment() (one-time order
+     * meta flag). On a reload or a back-navigation from the bank, the form is
+     * shown with a pay button instead, so the customer is never redirected
+     * unintentionally and never left on an empty page.
      */
     public function receipt_page( $order_id ): void {
-        $session_key = 'cardlink_receipt_ready_' . $order_id;
+        $order = wc_get_order( $order_id );
 
-        if ( ! WC()->session || WC()->session->get( $session_key ) !== $this->id ) {
+        if ( ! $order instanceof WC_Order || ! $order->needs_payment() ) {
             return;
         }
 
-        // Consume the flag so a reload will not render the form again.
-        WC()->session->set( $session_key, null );
+        $auto_submit = $this->consume_auto_submit_flag( $order );
 
-        echo '<p>' . esc_html__( 'Thank you for your order. We are now redirecting you to make payment.', 'cardlink-payment-gateway' ) . '</p>';
+        if ( $auto_submit ) {
+            echo '<p>' . esc_html__( 'Thank you for your order. We are now redirecting you to make payment.', 'cardlink-payment-gateway' ) . '</p>';
+        } else {
+            echo '<p>' . esc_html__( 'Thank you for your order. Click the below button to pay for your order.', 'cardlink-payment-gateway' ) . '</p>';
+        }
+
         // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in FormRenderer::render_payment_form().
-        echo $this->generate_payment_form( (int) $order_id );
+        echo $this->generate_payment_form( (int) $order_id, $auto_submit );
+    }
+
+    /**
+     * Read and clear the one-time auto-submit flag set in process_payment().
+     */
+    protected function consume_auto_submit_flag( WC_Order $order ): bool {
+        if ( $this->order_helper->get_meta( $order, self::AUTO_SUBMIT_META_KEY ) !== $this->id ) {
+            return false;
+        }
+
+        $this->order_helper->delete_meta( $order, self::AUTO_SUBMIT_META_KEY );
+        return true;
     }
 
     /**
      * Generate the payment form HTML. Must be implemented by child classes.
+     *
+     * @param bool $auto_submit Whether the form should submit itself on page load.
      */
-    abstract protected function generate_payment_form( int $order_id ): string;
+    abstract protected function generate_payment_form( int $order_id, bool $auto_submit = true ): string;
 
     /**
      * Get the redirect URL after payment.

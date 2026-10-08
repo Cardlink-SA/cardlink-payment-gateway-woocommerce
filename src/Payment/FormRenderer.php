@@ -17,7 +17,8 @@ class FormRenderer {
         string $digest,
         bool $use_iframe,
         string $gateway_id,
-        int $order_id
+        int $order_id,
+        bool $auto_submit = true
     ): string {
         $target = $use_iframe ? 'payment_iframe' : '_top';
 
@@ -29,19 +30,22 @@ class FormRenderer {
 
         $html .= '<input type="hidden" name="digest" value="' . esc_attr( $digest ) . '"/>';
 
-        // Fallback submit button (hidden by JS auto-submit).
+        // Submit button: fallback while auto-submitting, the only way to pay otherwise.
         $html .= '<div class="payment_buttons">';
         $html .= '<input type="submit" class="button alt" id="submit_payment_form" value="' . esc_attr__( 'Pay via Cardlink', 'cardlink-payment-gateway' ) . '"/>';
         $html .= '</div>';
 
         if ( $use_iframe ) {
-            $html .= $this->render_iframe_html( $gateway_id, $order_id );
+            $html .= $this->render_iframe_html( $gateway_id, $order_id, ! $auto_submit );
         }
 
         $html .= '</form>';
 
-        // Auto-submit JavaScript.
-        $html .= $this->render_auto_submit_js( $use_iframe );
+        if ( $auto_submit ) {
+            $html .= $this->render_auto_submit_js( $use_iframe );
+        } elseif ( $use_iframe ) {
+            $html .= $this->render_show_modal_on_submit_js( $gateway_id );
+        }
 
         return $html;
     }
@@ -73,13 +77,25 @@ class FormRenderer {
         return $value;
     }
 
-    private function render_iframe_html( string $gateway_id, int $order_id ): string {
-        $html  = '<div class="' . esc_attr( $gateway_id ) . '_modal">';
+    private function render_iframe_html( string $gateway_id, int $order_id, bool $hidden = false ): string {
+        $html  = '<div class="' . esc_attr( $gateway_id ) . '_modal"' . ( $hidden ? ' style="display:none"' : '' ) . '>';
         $html .= '<div class="' . esc_attr( $gateway_id ) . '_modal_wrapper">';
         $html .= '<iframe name="payment_iframe" id="payment_iframe" data-order-id="' . esc_attr( (string) $order_id ) . '"></iframe>';
         $html .= '</div>';
         $html .= '</div>';
         return $html;
+    }
+
+    /**
+     * Open the (initially hidden) iframe modal when the customer submits the form manually.
+     */
+    private function render_show_modal_on_submit_js( string $gateway_id ): string {
+        $js  = '<script type="text/javascript">';
+        $js .= 'jQuery(function($){';
+        $js .= '$("#payment_form").on("submit", function(){ $(".' . esc_js( $gateway_id ) . '_modal").css("display", "flex"); });';
+        $js .= '});';
+        $js .= '</script>';
+        return $js;
     }
 
     private function render_auto_submit_js( bool $use_iframe ): string {

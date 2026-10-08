@@ -184,7 +184,7 @@ class CardlinkGateway extends AbstractCardlinkGateway {
     /**
      * Generate the payment redirect form.
      */
-    protected function generate_payment_form( int $order_id ): string {
+    protected function generate_payment_form( int $order_id, bool $auto_submit = true ): string {
         $order = wc_get_order( $order_id );
         if ( ! $order ) {
             return '';
@@ -251,7 +251,8 @@ class CardlinkGateway extends AbstractCardlinkGateway {
             $digest,
             $use_iframe,
             $this->id,
-            $order_id
+            $order_id,
+            $auto_submit
         );
     }
 

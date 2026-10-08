@@ -3,16 +3,18 @@
 - Contributors: cardlink
 - Tags: payments, payment-gateway
 - Requires at least: 6.0
-- Tested up to: 7.0
+- Tested up to: 7.1
 - Requires PHP: 7.4+
 - WC requires at least: 7.0.0
-- WC tested up to: 9.6
+- WC tested up to: 11.2
 - License: GPLv2 or later
 - License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 
 ## Changelog
 
+- **1.1.2**
+  - Fixed an empty payment page with the WooCommerce Checkout block: the redirect form is now shown whenever the order needs payment. After a page reload the form is no longer submitted automatically; the customer continues with the pay button.
 - **1.1.1**
   - Fixed an iframe payment issue where customers could be redirected off the payment page to the order-received page before paying (most often on the first order of a session). Redirection now happens only after the gateway has returned its response.
   - Fixed the iframe completion flow so the customer's window is reliably redirected after a successful payment.

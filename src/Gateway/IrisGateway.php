@@ -164,7 +164,7 @@ class IrisGateway extends AbstractCardlinkGateway {
         }
     }
 
-    protected function generate_payment_form( int $order_id ): string {
+    protected function generate_payment_form( int $order_id, bool $auto_submit = true ): string {
         $order = wc_get_order( $order_id );
         if ( ! $order ) {
             return '';
@@ -205,7 +205,8 @@ class IrisGateway extends AbstractCardlinkGateway {
             $digest,
             $use_iframe,
             $this->id,
-            $order_id
+            $order_id,
+            $auto_submit
         );
     }
 

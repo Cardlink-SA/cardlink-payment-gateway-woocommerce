@@ -1,10 +1,10 @@
 === Cardlink Payment Gateway ===
 Contributors: cardlink
 Tags: payments, payment-gateway
-Requires at least: 5.8.3
-Tested up to: 7.0
-Stable tag: 1.1.1
-Requires PHP: 7.x - 8.x
+Requires at least: 6.0
+Tested up to: 7.1
+Stable tag: 1.1.2
+Requires PHP: 7.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -50,6 +50,9 @@ Here are the detailed instructions to manually install a WordPress plugin by tra
 3. The IRIS Payment method settings screen used to configure the gateway.
 
 == Changelog ==
+
+= 1.1.2 =
+* Fixed an empty payment page with the WooCommerce Checkout block: the redirect form is now shown whenever the order needs payment. After a page reload the form is no longer submitted automatically; the customer continues with the pay button.
 
 = 1.1.1 =
 * Fixed an iframe payment issue where customers could be redirected off the payment page to the order-received page before paying (most often on the first order of a session). Redirection now happens only after the gateway has returned its response.

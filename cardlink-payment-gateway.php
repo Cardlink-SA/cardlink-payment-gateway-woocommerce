@@ -3,7 +3,7 @@
  * Plugin Name:       Cardlink Payment Gateway
  * Plugin URI:        https://www.cardlink.gr/
  * Description:       Cardlink Payment Gateway allows you to accept payment through various schemes such as Visa, Mastercard, Maestro, American Express, Diners, Discover cards on your WooCommerce Powered Site via Cardlink payment gateway.
- * Version:           1.1.1
+ * Version:           1.1.2
  * Requires at least: 6.0
  * Requires PHP:      7.4
  * Author:            Cardlink
@@ -14,12 +14,12 @@
  * Domain Path:       /languages
  * Requires Plugins:  woocommerce
  * WC requires at least: 7.0.0
- * WC tested up to:   9.6
+ * WC tested up to:   11.2
  */
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'FLAVOR_CARDLINK_VERSION', '1.1.1' );
+define( 'FLAVOR_CARDLINK_VERSION', '1.1.2' );
 define( 'FLAVOR_CARDLINK_FILE', __FILE__ );
 define( 'FLAVOR_CARDLINK_PATH', plugin_dir_path( __FILE__ ) );
 define( 'FLAVOR_CARDLINK_URL', plugin_dir_url( __FILE__ ) );
