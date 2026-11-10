@@ -33,7 +33,7 @@ class FormBuilder {
         ?string $pay_method = null
     ): array {
         $order_id    = $order->get_id();
-        $timestamp   = gmdate( 'Ymdhisu' );
+        $timestamp   = self::unique_timestamp();
         $order_key   = $order_id . 'at' . $timestamp;
         $lang        = $this->locale_helper->get_cardlink_language();
         $bill_country = $order->get_billing_country();
@@ -105,6 +105,17 @@ class FormBuilder {
     }
 
     /**
+     * Suffix for the Cardlink orderid: 24-hour UTC time plus a random part.
+     *
+     * The previous gmdate( 'Ymdhisu' ) used a 12-hour clock (h) and gmdate()
+     * always returns 000000 for microseconds (u), so two attempts on the same
+     * order 12 hours apart produced the same orderid.
+     */
+    private static function unique_timestamp(): string {
+        return gmdate( 'YmdHis' ) . str_pad( (string) wp_rand( 0, 999 ), 3, '0', STR_PAD_LEFT );
+    }
+
+    /**
      * Build the form data array for a tokenizer-only transaction (no amount).
      */
     public function build_tokenizer_fields(
@@ -120,7 +131,7 @@ class FormBuilder {
         string $css_url = ''
     ): array {
         $lang      = $this->locale_helper->get_cardlink_language();
-        $timestamp = gmdate( 'Ymdhisu' );
+        $timestamp = self::unique_timestamp();
         $order_key = $user_id . 'at' . $timestamp;
 
         return [

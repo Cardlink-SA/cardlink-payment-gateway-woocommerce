@@ -31,14 +31,6 @@ class PaymentConfirmationEndpoint {
             return new WP_REST_Response( [ 'error' => 'Order not found.' ], 404 );
         }
 
-        // Only process if order is not already completed/processing.
-        if ( in_array( $order->get_status(), [ 'processing', 'completed' ], true ) ) {
-            return new WP_REST_Response( [
-                'status'   => 'already_processed',
-                'order_id' => $order_id,
-            ], 200 );
-        }
-
         // Resolve the correct gateway for this order (IRIS or main Cardlink).
         $gateway = $this->resolve_gateway( $order->get_payment_method() );
         if ( ! $gateway ) {
@@ -47,6 +39,20 @@ class PaymentConfirmationEndpoint {
 
         $shared_secret = $gateway->get_shared_secret_key();
         $gateway_id    = $gateway->id;
+
+        // Unsigned or forged notifications are rejected without touching the
+        // order and without revealing its state.
+        if ( ! $this->response_handler->is_authentic( $post_data, $shared_secret ) ) {
+            return new WP_REST_Response( [ 'error' => 'Invalid signature.' ], 403 );
+        }
+
+        // Only process if order is not already completed/processing.
+        if ( in_array( $order->get_status(), [ 'processing', 'completed' ], true ) ) {
+            return new WP_REST_Response( [
+                'status'   => 'already_processed',
+                'order_id' => $order_id,
+            ], 200 );
+        }
 
         $order = $this->response_handler->handle(
             $post_data,

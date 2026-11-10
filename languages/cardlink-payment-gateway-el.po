@@ -802,3 +802,74 @@ msgstr "Προσθήκη κάρτας"
 #: src/Token/TokenFormRenderer.php:67 src/Token/TokenFormRenderer.php:76
 msgid "Store your card?"
 msgstr "Θέλετε να αποθηκεύσετε την κάρτα σας;"
+
+#: src/Admin/OrderMetaBox.php:74
+msgid "Payment has not been completed yet. Transaction info will be available after a successful payment."
+msgstr "Η πληρωμή δεν έχει ολοκληρωθεί ακόμη. Τα στοιχεία της συναλλαγής θα είναι διαθέσιμα μετά από επιτυχή πληρωμή."
+
+#: src/Admin/OrderMetaBox.php:212
+msgid "Cancel failed."
+msgstr "Η ακύρωση απέτυχε."
+
+#: src/Admin/OrderMetaBox.php:213
+msgid "Cardlink cancel/reverse failed: %s"
+msgstr "Η ακύρωση/αντιλογισμός Cardlink απέτυχε: %s"
+
+#: src/Admin/OrderMetaBox.php:207
+msgid "Cardlink cancel/reverse successful: %1$s %2$s"
+msgstr "Επιτυχής ακύρωση/αντιλογισμός Cardlink: %1$s %2$s"
+
+#: src/Admin/OrderMetaBox.php:209
+msgid "Payment cancelled/reversed via Cardlink."
+msgstr "Η πληρωμή ακυρώθηκε/αντιλογίστηκε μέσω Cardlink."
+
+#: src/Admin/OrderMetaBox.php:210
+msgid "Cancel (Reverse) successful."
+msgstr "Επιτυχής ακύρωση (αντιλογισμός)."
+
+#: src/Admin/OrderMetaBox.php:353
+msgid "Cancel (Reverse)"
+msgstr "Ακύρωση (Αντιλογισμός)"
+
+#: src/Admin/SettingsFields.php:163 src/Payment/ResponseHandler.php:236
+#: src/Payment/ResponseHandler.php:312
+msgid "IRIS"
+msgstr "IRIS"
+
+#: src/Gateway/AbstractCardlinkGateway.php:181
+msgid "Thank you for your order. Click the below button to pay for your order."
+msgstr "Ευχαριστούμε για την παραγγελία σας. Πατήστε το παρακάτω κουμπί για να πληρώσετε την παραγγελία σας."
+
+#. translators: %d: maximum number of payment attempts
+#: src/Gateway/AbstractCardlinkGateway.php:236
+msgid "Cardlink: order cancelled after reaching the maximum of %d payment attempts."
+msgstr "Cardlink: η παραγγελία ακυρώθηκε επειδή συμπληρώθηκε το μέγιστο των %d προσπαθειών πληρωμής."
+
+#: src/Gateway/AbstractCardlinkGateway.php:245
+msgid "This order has reached the maximum number of payment attempts and has been cancelled. Please place a new order."
+msgstr "Η παραγγελία συμπλήρωσε τον μέγιστο αριθμό προσπαθειών πληρωμής και ακυρώθηκε. Παρακαλούμε κάντε νέα παραγγελία."
+
+#: src/Payment/ResponseHandler.php:241
+msgid "Payment Via IRIS. Transaction ID: %s"
+msgstr "Πληρωμή μέσω IRIS. Αναγνωριστικό Συναλλαγής: %s"
+
+#: src/Payment/ResponseHandler.php:282
+msgid "Payment Via IRIS<br />Transaction ID: "
+msgstr "Πληρωμή μέσω IRIS<br />Αναγνωριστικό Συναλλαγής: "
+
+#: src/Payment/ResponseHandler.php:318
+msgid "IRIS payment authorized (pre-auth). Transaction ID: %s. Awaiting capture."
+msgstr "Η πληρωμή IRIS εγκρίθηκε (προέγκριση). Αναγνωριστικό Συναλλαγής: %s. Αναμένεται είσπραξη."
+
+#: src/Payment/ResponseHandler.php:325
+msgid "Payment pre-authorized via IRIS. Transaction ID: %s. Use Capture to complete the payment."
+msgstr "Πληρωμή με προέγκριση μέσω IRIS. Αναγνωριστικό Συναλλαγής: %s. Χρησιμοποιήστε την Είσπραξη για να ολοκληρώσετε την πληρωμή."
+
+#. translators: 1: Cardlink status, 2: current order status
+#: src/Payment/ResponseHandler.php:406
+msgid "Cardlink %1$s response ignored: the order is %2$s."
+msgstr "Η απάντηση Cardlink %1$s αγνοήθηκε: η παραγγελία είναι σε κατάσταση «%2$s»."
+
+#: src/Gateway/AbstractCardlinkGateway.php:182
+msgid "Too many payment attempts from your connection. Please wait a minute and try again."
+msgstr "Πάρα πολλές προσπάθειες πληρωμής από τη σύνδεσή σας. Περιμένετε ένα λεπτό και δοκιμάστε ξανά."

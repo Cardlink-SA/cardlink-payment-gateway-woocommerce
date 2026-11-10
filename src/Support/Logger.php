@@ -40,9 +40,15 @@ class Logger {
         $this->log( '---- End of Cardlink Transaction Response ----' );
     }
 
-    public function log_digest( string $data, string $digest ): void {
+    /**
+     * Log the digest of an outgoing payment form.
+     *
+     * Only the Cardlink orderid is logged, never the concatenated fields: they
+     * contain the customer's email, phone and address.
+     */
+    public function log_digest( string $orderid, string $digest ): void {
         $this->log( '---- Cardlink Transaction digest -----' );
-        $this->log( 'Data: ' . $data );
+        $this->log( 'Order ID: ' . $orderid );
         $this->log( 'Digest: ' . $digest );
         $this->log( '---- End of Cardlink Transaction digest ----' );
     }

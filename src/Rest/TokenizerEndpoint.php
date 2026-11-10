@@ -46,8 +46,16 @@ class TokenizerEndpoint {
 
         $shared_secret = $gateway->get_shared_secret_key();
 
-        // Verify digest.
+        // Verify digest. Without a shared secret the digest could be computed by anyone.
         try {
+            if ( '' === $shared_secret ) {
+                throw new DigestMismatchException( 'Shared secret not configured.' );
+            }
+            foreach ( $post_data as $value ) {
+                if ( ! is_scalar( $value ) ) {
+                    throw new DigestMismatchException( 'Malformed fields.' );
+                }
+            }
             $this->digest_service->verify_response( $post_data, $shared_secret );
         } catch ( DigestMismatchException $e ) {
             $redirect_url = add_query_arg( 'tok_message', urlencode( __( 'Card verification failed.', 'cardlink-payment-gateway' ) ), $redirect_url );

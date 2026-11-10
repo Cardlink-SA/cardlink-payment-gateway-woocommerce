@@ -45,7 +45,6 @@ class ResponseHandler {
     ): WC_Order {
         $this->logger->log_response( $post_data );
 
-        $fields   = $this->parse_response_fields( $post_data );
         $order_id = $this->extract_order_id( $post_data );
         $order    = wc_get_order( $order_id );
 
@@ -55,6 +54,16 @@ class ResponseHandler {
             );
         }
 
+        // Verify the digest BEFORE touching the order. An unsigned or forged
+        // request must never change the order, its status or its meta. It must
+        // not get the order back either: the caller would redirect to the
+        // order-received URL, which carries the order key.
+        if ( ! $this->is_authentic( $post_data, $shared_secret ) ) {
+            throw new InvalidResponseException( 'Invalid response signature.' );
+        }
+
+        $fields = $this->parse_response_fields( $post_data );
+
         // Mark that the gateway has POSTed a response for this order (success or
         // failure). The iframe polling (AjaxHandler::handle_check_order_status)
         // redirects the customer's top window out of the payment iframe ONLY
@@ -62,21 +71,15 @@ class ResponseHandler {
         // redirected customers off the payment page before they had paid.
         $this->order_helper->add_meta( $order->get_id(), '_cardlink_response_received', 'yes' );
 
-        // Verify digests.
-        try {
-            $this->digest_service->verify_response( $post_data, $shared_secret );
-            $this->digest_service->verify_bonus_digest( $post_data, $shared_secret );
-        } catch ( DigestMismatchException $e ) {
-            $this->logger->log( 'Digest verification failed: ' . $e->getMessage(), 'error' );
-            $this->handle_failed_payment(
-                $order,
-                'ERROR',
-                __( "A technical problem occurred. The transaction wasn't successful, payment wasn't received.", 'cardlink-payment-gateway' )
-            );
+        // A paid order is final: a duplicate or late response (e.g. browser
+        // return plus Background confirmation, or an older attempt) must not
+        // re-process it or downgrade it.
+        if ( $order->is_paid() ) {
+            $this->logger->log( sprintf( 'Order %d is already paid; response %s (%s) ignored.', $order->get_id(), $fields['orderid'], $fields['status'] ) );
             return $order;
         }
 
-        $status = strtoupper( $fields['status'] );
+        $status = strtoupper( (string) $fields['status'] );
 
         switch ( $status ) {
             case 'CAPTURED':
@@ -84,6 +87,12 @@ class ResponseHandler {
                 break;
 
             case 'AUTHORIZED':
+                // Duplicate pre-authorisation response for an order already on hold.
+                if ( $order->has_status( 'on-hold' ) ) {
+                    $this->logger->log( sprintf( 'Order %d already on hold; duplicate AUTHORIZED response %s ignored.', $order->get_id(), $fields['orderid'] ) );
+                    break;
+                }
+
                 $this->handle_authorized_payment( $order, $fields, $gateway_id, $send_order_note, $is_background );
                 break;
 
@@ -116,8 +125,44 @@ class ResponseHandler {
         return $order;
     }
 
+    /**
+     * Whether a gateway response carries a valid digest for the given secret.
+     *
+     * Rejects responses with a missing secret (the digest would then be
+     * computable by anyone), a missing digest, or non-scalar values.
+     */
+    public function is_authentic( array $post_data, string $shared_secret ): bool {
+        $orderid = isset( $post_data['orderid'] ) && is_scalar( $post_data['orderid'] )
+            ? sanitize_text_field( (string) $post_data['orderid'] )
+            : '';
+
+        if ( '' === $shared_secret || ! isset( $post_data['digest'] ) || ! is_string( $post_data['digest'] ) || '' === $post_data['digest'] ) {
+            $this->logger->log( sprintf( 'Cardlink response rejected (orderid %s): missing digest or shared secret.', $orderid ), 'error' );
+            return false;
+        }
+
+        foreach ( $post_data as $value ) {
+            if ( ! is_scalar( $value ) ) {
+                $this->logger->log( sprintf( 'Cardlink response rejected (orderid %s): malformed fields.', $orderid ), 'error' );
+                return false;
+            }
+        }
+
+        try {
+            $this->digest_service->verify_response( $post_data, $shared_secret );
+            $this->digest_service->verify_bonus_digest( $post_data, $shared_secret );
+        } catch ( DigestMismatchException $e ) {
+            $this->logger->log( sprintf( 'Cardlink response rejected (orderid %s): %s', $orderid, $e->getMessage() ), 'error' );
+            return false;
+        }
+
+        return true;
+    }
+
     public function extract_order_id( array $post_data ): int {
-        $orderid_post = sanitize_text_field( $post_data['orderid'] ?? '' );
+        $orderid_post = isset( $post_data['orderid'] ) && is_scalar( $post_data['orderid'] )
+            ? sanitize_text_field( (string) $post_data['orderid'] )
+            : '';
 
         if ( preg_match( '/^(.*?)at/', $orderid_post, $matches ) ) {
             $id = (int) $matches[1];
@@ -316,6 +361,18 @@ class ResponseHandler {
         string $message,
         string $type = 'error'
     ): void {
+        // Only an unpaid order can fail. A refused or cancelled response must
+        // not override a pre-authorised (on-hold) or cancelled order.
+        if ( ! $order->has_status( [ 'pending', 'failed' ] ) ) {
+            $order->add_order_note( sprintf(
+                /* translators: 1: Cardlink status, 2: current order status */
+                __( 'Cardlink %1$s response ignored: the order is %2$s.', 'cardlink-payment-gateway' ),
+                $status,
+                wc_get_order_status_name( $order->get_status() )
+            ) );
+            return;
+        }
+
         $order->update_status( 'failed', $message );
 
         $display_message = ! empty( $message )

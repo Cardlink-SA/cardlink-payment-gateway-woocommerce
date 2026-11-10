@@ -23,6 +23,18 @@ abstract class AbstractCardlinkGateway extends WC_Payment_Gateway {
     /** Order meta flag: set in process_payment(), consumed by the first receipt page render. */
     protected const AUTO_SUBMIT_META_KEY = '_cardlink_auto_submit';
 
+    /** Order meta: number of signed payment forms issued for the order. */
+    protected const ATTEMPTS_META_KEY = '_cardlink_payment_attempts';
+
+    /** Maximum number of payment attempts per order (filter: cardlink_max_payment_attempts). */
+    public const MAX_PAYMENT_ATTEMPTS = 10;
+
+    /** Payment forms one IP address may open per minute, across all orders (filter: cardlink_payment_forms_per_ip_per_minute). */
+    public const PAYMENT_FORMS_PER_IP_PER_MINUTE = 5;
+
+    /** Transient prefix for the per-IP payment form counter. */
+    protected const IP_RATE_LIMIT_TRANSIENT_PREFIX = 'cardlink_rl_';
+
     protected DigestService $digest_service;
     protected FormBuilder $form_builder;
     protected FormRenderer $form_renderer;
@@ -86,6 +98,17 @@ abstract class AbstractCardlinkGateway extends WC_Payment_Gateway {
     public function process_payment( $order_id ): array {
         $order = wc_get_order( $order_id );
 
+        // Pay-for-order on an order that has used up its payment attempts.
+        if ( $order instanceof WC_Order && $this->payment_attempts_exhausted( $order ) ) {
+            $this->cancel_for_exhausted_attempts( $order );
+            wc_add_notice( $this->get_attempts_exhausted_message(), 'error' );
+
+            return [
+                'result'   => 'failure',
+                'redirect' => '',
+            ];
+        }
+
         $this->save_checkout_meta( $order_id );
 
         // Mark the order so the receipt page auto-submits once (not on reload).
@@ -144,6 +167,24 @@ abstract class AbstractCardlinkGateway extends WC_Payment_Gateway {
             return;
         }
 
+        // Every render issues a new signed payment form (= a new attempt at
+        // Cardlink), so the number of renders per order is capped. Without the
+        // cap a bot can reload this page and retry cards on one order forever.
+        if ( $this->payment_attempts_exhausted( $order ) ) {
+            $this->cancel_for_exhausted_attempts( $order );
+            wc_print_notice( $this->get_attempts_exhausted_message(), 'error' );
+            return;
+        }
+
+        // Per-IP rate limit across all orders: a bot that keeps creating new
+        // orders is slowed down too. Temporary only, the order stays payable.
+        if ( ! $this->register_ip_payment_form( $order ) ) {
+            wc_print_notice( __( 'Too many payment attempts from your connection. Please wait a minute and try again.', 'cardlink-payment-gateway' ), 'error' );
+            return;
+        }
+
+        $this->register_payment_attempt( $order );
+
         $auto_submit = $this->consume_auto_submit_flag( $order );
 
         if ( $auto_submit ) {
@@ -154,6 +195,106 @@ abstract class AbstractCardlinkGateway extends WC_Payment_Gateway {
 
         // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in FormRenderer::render_payment_form().
         echo $this->generate_payment_form( (int) $order_id, $auto_submit );
+    }
+
+    /**
+     * Maximum number of payment forms that may be issued for one order.
+     *
+     * Fixed at MAX_PAYMENT_ATTEMPTS. Developers can change it with the
+     * `cardlink_max_payment_attempts` filter; values below 1 are ignored.
+     */
+    public function get_max_payment_attempts( WC_Order $order ): int {
+        $max = (int) apply_filters( 'cardlink_max_payment_attempts', self::MAX_PAYMENT_ATTEMPTS, $order, $this );
+
+        return $max > 0 ? $max : self::MAX_PAYMENT_ATTEMPTS;
+    }
+
+    protected function get_payment_attempts( WC_Order $order ): int {
+        return (int) $this->order_helper->get_meta( $order, self::ATTEMPTS_META_KEY );
+    }
+
+    protected function payment_attempts_exhausted( WC_Order $order ): bool {
+        return $this->get_payment_attempts( $order ) >= $this->get_max_payment_attempts( $order );
+    }
+
+    protected function register_payment_attempt( WC_Order $order ): void {
+        $attempts = $this->get_payment_attempts( $order ) + 1;
+        $order->update_meta_data( self::ATTEMPTS_META_KEY, $attempts );
+        $order->save_meta_data();
+
+        $this->logger->log( sprintf( 'Order %d: payment attempt %d of %d.', $order->get_id(), $attempts, $this->get_max_payment_attempts( $order ) ) );
+    }
+
+    /**
+     * Cancel an unpaid order whose payment attempts are used up.
+     */
+    protected function cancel_for_exhausted_attempts( WC_Order $order ): void {
+        if ( ! $order->needs_payment() || $order->has_status( 'cancelled' ) ) {
+            return;
+        }
+
+        $max = $this->get_max_payment_attempts( $order );
+
+        $order->update_status(
+            'cancelled',
+            sprintf(
+                /* translators: %d: maximum number of payment attempts */
+                __( 'Cardlink: order cancelled after reaching the maximum of %d payment attempts.', 'cardlink-payment-gateway' ),
+                $max
+            )
+        );
+
+        $this->logger->log( sprintf( 'Order %d cancelled: payment attempts exhausted (%d).', $order->get_id(), $max ), 'warning' );
+    }
+
+    /**
+     * Count a payment form for the visitor's IP address in the current
+     * one-minute window.
+     *
+     * The IP is REMOTE_ADDR: forwarded headers can be forged by the client, so
+     * sites behind a reverse proxy or CDN supply the real client IP through the
+     * `cardlink_rate_limit_client_ip` filter. A limit below 1 (filter
+     * `cardlink_payment_forms_per_ip_per_minute`) disables the check. Only a
+     * keyed hash of the IP is stored.
+     *
+     * @return bool False when the IP has reached the limit (no form may be issued).
+     */
+    protected function register_ip_payment_form( WC_Order $order ): bool {
+        $limit = (int) apply_filters( 'cardlink_payment_forms_per_ip_per_minute', self::PAYMENT_FORMS_PER_IP_PER_MINUTE, $order, $this );
+        if ( $limit < 1 ) {
+            return true;
+        }
+
+        $remote_addr = isset( $_SERVER['REMOTE_ADDR'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) : '';
+        $ip          = (string) apply_filters( 'cardlink_rate_limit_client_ip', $remote_addr, $order, $this );
+        if ( '' === $ip ) {
+            return true;
+        }
+
+        $key    = self::IP_RATE_LIMIT_TRANSIENT_PREFIX . wp_hash( $ip );
+        $now    = time();
+        $window = get_transient( $key );
+
+        if ( ! is_array( $window ) || ! isset( $window['start'], $window['count'] ) || $now - (int) $window['start'] >= MINUTE_IN_SECONDS ) {
+            $window = [
+                'start' => $now,
+                'count' => 0,
+            ];
+        }
+
+        if ( (int) $window['count'] >= $limit ) {
+            $this->logger->log( sprintf( 'Order %d: payment form refused, IP rate limit of %d per minute reached.', $order->get_id(), $limit ), 'warning' );
+            return false;
+        }
+
+        $window['count'] = (int) $window['count'] + 1;
+        set_transient( $key, $window, max( 1, MINUTE_IN_SECONDS - ( $now - (int) $window['start'] ) ) );
+
+        return true;
+    }
+
+    protected function get_attempts_exhausted_message(): string {
+        return __( 'This order has reached the maximum number of payment attempts and has been cancelled. Please place a new order.', 'cardlink-payment-gateway' );
     }
 
     /**

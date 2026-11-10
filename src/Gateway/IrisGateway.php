@@ -9,6 +9,7 @@ defined( 'ABSPATH' ) || exit;
 use Flavor\CardlinkPaymentGateway\Acquirer\AcquirerRegistry;
 use Flavor\CardlinkPaymentGateway\Admin\SettingsFields;
 use Flavor\CardlinkPaymentGateway\Database\TransactionRepository;
+use Flavor\CardlinkPaymentGateway\Exception\InvalidResponseException;
 use Flavor\CardlinkPaymentGateway\Payment\DigestService;
 use Flavor\CardlinkPaymentGateway\Payment\FormBuilder;
 use Flavor\CardlinkPaymentGateway\Payment\FormRenderer;
@@ -196,7 +197,7 @@ class IrisGateway extends AbstractCardlinkGateway {
         );
 
         $digest = $this->digest_service->compute_for_fields( $fields, $this->shared_secret_key );
-        $this->logger->log_digest( implode( '', $fields ), $digest );
+        $this->logger->log_digest( (string) $fields['orderid'], $digest );
 
         $use_iframe = ( $this->popup === 'yes' );
         return $this->form_renderer->render_payment_form(
@@ -214,11 +215,17 @@ class IrisGateway extends AbstractCardlinkGateway {
         // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Callback from external payment gateway, verified via digest.
         $post_data = array_map( 'sanitize_text_field', wp_unslash( $_POST ) );
 
-        $order = $this->response_handler->handle(
-            $post_data,
-            $this->shared_secret_key,
-            $this->id
-        );
+        try {
+            $order = $this->response_handler->handle(
+                $post_data,
+                $this->shared_secret_key,
+                $this->id
+            );
+        } catch ( InvalidResponseException $e ) {
+            $this->logger->log( 'Cardlink IRIS response rejected: ' . $e->getMessage(), 'error' );
+            wp_safe_redirect( wc_get_checkout_url() );
+            exit;
+        }
 
         $redirect_url = $this->get_redirect_url( $order );
         wp_safe_redirect( $redirect_url );

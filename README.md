@@ -13,6 +13,8 @@
 
 ## Changelog
 
+- **1.1.3**
+  - Security and stability improvements in payment processing.
 - **1.1.2**
   - Fixed an empty payment page with the WooCommerce Checkout block: the redirect form is now shown whenever the order needs payment. After a page reload the form is no longer submitted automatically; the customer continues with the pay button.
 - **1.1.1**

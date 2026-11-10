@@ -9,6 +9,7 @@ defined( 'ABSPATH' ) || exit;
 use Flavor\CardlinkPaymentGateway\Acquirer\AcquirerRegistry;
 use Flavor\CardlinkPaymentGateway\Admin\SettingsFields;
 use Flavor\CardlinkPaymentGateway\Database\TransactionRepository;
+use Flavor\CardlinkPaymentGateway\Exception\InvalidResponseException;
 use Flavor\CardlinkPaymentGateway\Installment\InstallmentRenderer;
 use Flavor\CardlinkPaymentGateway\Payment\DigestService;
 use Flavor\CardlinkPaymentGateway\Payment\FormBuilder;
@@ -241,7 +242,7 @@ class CardlinkGateway extends AbstractCardlinkGateway {
 
         // Compute digest.
         $digest = $this->digest_service->compute_for_fields( $fields, $this->shared_secret_key );
-        $this->logger->log_digest( implode( '', $fields ), $digest );
+        $this->logger->log_digest( (string) $fields['orderid'], $digest );
 
         // Render form.
         $use_iframe = ( $this->popup === 'yes' );
@@ -263,12 +264,18 @@ class CardlinkGateway extends AbstractCardlinkGateway {
         // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Callback from external payment gateway, verified via digest.
         $post_data = array_map( 'sanitize_text_field', wp_unslash( $_POST ) );
 
-        $order = $this->response_handler->handle(
-            $post_data,
-            $this->shared_secret_key,
-            $this->id,
-            ! empty( $this->order_note )
-        );
+        try {
+            $order = $this->response_handler->handle(
+                $post_data,
+                $this->shared_secret_key,
+                $this->id,
+                ! empty( $this->order_note )
+            );
+        } catch ( InvalidResponseException $e ) {
+            $this->logger->log( 'Cardlink response rejected: ' . $e->getMessage(), 'error' );
+            wp_safe_redirect( wc_get_checkout_url() );
+            exit;
+        }
 
         $redirect_url = $this->get_redirect_url( $order );
         wp_safe_redirect( $redirect_url );
@@ -306,7 +313,6 @@ class CardlinkGateway extends AbstractCardlinkGateway {
         $encoded = base64_encode( wp_json_encode( $fields ) );
         $url     = wc_get_endpoint_url( 'payment-methods' );
         $url     = add_query_arg( [
-            'url'                => $this->get_post_url(),
             'add_payment_method' => $encoded,
         ], $url );
 
@@ -332,13 +338,20 @@ class CardlinkGateway extends AbstractCardlinkGateway {
             return;
         }
 
-        $post_url = isset( $_GET['url'] ) ? esc_url_raw( wp_unslash( $_GET['url'] ) ) : '';
-        $data     = json_decode( base64_decode( sanitize_text_field( wp_unslash( $_GET['add_payment_method'] ) ) ), true );
+        $data = json_decode( base64_decode( sanitize_text_field( wp_unslash( $_GET['add_payment_method'] ) ) ), true );
         // phpcs:enable WordPress.Security.NonceVerification.Recommended
+
+        // The form target is always the configured Cardlink endpoint, never a
+        // URL taken from the request: otherwise a crafted link would make this
+        // page auto-POST to any external site.
+        $post_url = $this->get_post_url();
 
         if ( ! is_array( $data ) || empty( $post_url ) ) {
             return;
         }
+
+        // Only scalar values can be rendered as hidden fields.
+        $data = array_filter( $data, 'is_scalar' );
 
         // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in FormRenderer::render_tokenizer_form().
         echo $this->form_renderer->render_tokenizer_form( $post_url, $data );

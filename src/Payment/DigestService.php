@@ -49,10 +49,9 @@ class DigestService {
         $computed = $this->compute( $data );
         $received = $post_data['digest'] ?? '';
 
-        if ( ! hash_equals( $computed, $received ) ) {
-            throw new DigestMismatchException(
-                sprintf( 'Digest mismatch. Expected: %s, Got: %s', $computed, $received )
-            );
+        if ( ! is_string( $received ) || ! hash_equals( $computed, $received ) ) {
+            // The expected digest is derived from the shared secret: never log it.
+            throw new DigestMismatchException( 'Digest mismatch.' );
         }
     }
 
@@ -65,6 +64,9 @@ class DigestService {
         $bonus_digest = $post_data['xlsbonusdigest'] ?? '';
         if ( empty( $bonus_digest ) ) {
             return;
+        }
+        if ( ! is_string( $bonus_digest ) ) {
+            throw new DigestMismatchException( 'Bonus digest mismatch.' );
         }
 
         $bonus_fields = [
